@@ -1,0 +1,113 @@
+body {
+  background: black;
+  font-size: 16px;
+}
+
+.kitten {
+  &__home {
+    display: block;
+
+    &_slideshow {
+      height: 100vh;
+
+      &-container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        overflow-x: scroll;
+        scroll-snap-type: x mandatory;
+      }
+
+      &-item {
+        flex-shrink: 0;
+        position: relative;
+        width: 100vw;
+        height: 100%;
+        scroll-snap-align: center;
+        perspective: 600px;
+
+        &-image {
+          position: relative;
+          object-fit: cover;
+          width: 100%;
+          height: 100%;
+
+          &--rotate-left {
+            max-width: initial;
+            width: initial;
+            object-fit: initial;
+            transform-origin: left;
+            transform: rotateY(51.7deg);
+          }
+
+          &--rotate-right {
+            max-width: initial;
+            width: initial;
+            object-fit: initial;
+            transform-origin: right;
+            right: 454px;
+            transform: rotateY(-47.1deg);
+          }
+
+          &--center {
+            height: 43%;
+            transform: translateY(-50%);
+            top: 50%;
+            position: relative;
+          }
+        }
+
+        &-title {
+          padding: 20px;
+          position: absolute;
+          bottom: 0;
+          opacity: 0;
+          visibility: hidden;
+          transition: visibility .1s linear,
+            opacity .1s linear;
+
+          &.active {
+            opacity: 1;
+            visibility: visible;
+          }
+        }
+      }
+    }
+  }
+
+  &__menu {
+    position: fixed;
+    z-index: 10;
+    width: 100vw;
+    height: 70px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    &_logo {
+      position: relative;
+      top: 14px;
+      font-size: 56px;
+      padding: 20px;
+    }
+
+    &_navigation {
+      cursor: pointer;
+      padding: 20px;
+
+      &-icon {
+        font-size: 30px;
+      }
+
+      nav {
+        position: absolute;
+        right: -100%;
+        visibility: hidden;
+      }
+    }
+  }
+}
+
+

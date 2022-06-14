@@ -1,0 +1,19 @@
+@font-face {
+  font-family: 'ArialMT';
+  src: url('../fonts/ArialMT.woff');
+  src: url('../fonts/ArialMT.otf'),
+    url('../fonts/ArialMT.woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+.kitten {
+  font-family: 'ArialMT';
+  color: white;
+
+  &__title3 {
+    text-transform: uppercase;
+    font-size: 18px;
+  }
+}
