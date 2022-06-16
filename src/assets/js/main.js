@@ -2,28 +2,52 @@
  *  HOME SLIDESHOW
  */
 
+
 const slideshowContainer = document.getElementsByClassName('kitten__home_slideshow-container')[0];
-const slideshowItems = document.getElementsByClassName('kitten__home_slideshow-item');
-const cartons = Array.prototype.slice.call(document.getElementsByClassName('kitten__home_slideshow-item-title'));
-// initialize slideshow
-cartons[0].classList.add('active')
+const captions = Array.prototype.slice.call(document.getElementsByClassName('kitten__home_slideshow-item-title'));
+const slideshowItems = Array.prototype.slice.call(document.getElementsByClassName('kitten__home_slideshow-item'))
+
+
+let dimensions = []
+let currentSlide
+let ctnrWidth 
+let edges 
+
+// handle global variables's values on init and resize
+let handleDimension = function() {
+  dimensions = []
+  slideshowItems.forEach(function(e,i) {
+    dimensions.push(e.offsetWidth)
+  })
+  edges = dimensions.map((elem, index) => dimensions.slice(0,index + 1).reduce((a, b) => a + b))
+  edges.unshift(0)
+  ctnrWidth = dimensions.reduce((prev, a) => prev + a, 0)
+}
+
+window.onresize = handleDimension
+
+
 // handle slide's title display
 slideshowContainer.addEventListener(
   'scroll',
   function() {
-    var scrollLeft = slideshowContainer.scrollLeft
-    var itemWidth = slideshowContainer.clientWidth
-    var ctnrWidth = itemWidth * slideshowItems.length
-    var currentSlide = scrollLeft / (ctnrWidth / slideshowItems.length)
+    let scrollLeft = slideshowContainer.scrollLeft
 
-    if(Number.isInteger(currentSlide)) {
-      cartons[currentSlide].classList.add('active')
-    } else {
-      cartons.forEach(function(e) {
-        e.classList.remove('active')
-      })
-    }
+    edges.forEach(function(e, i) {
+      if(Math.ceil(scrollLeft) == e) {
+        currentSlide = i
+        captions[currentSlide].classList.add('active')
+      } else if (Math.ceil(scrollLeft) !== 0 && edges[currentSlide] !== Math.ceil(scrollLeft)) {
+        captions.forEach(function(e) {
+          e.classList.remove('active')
+        })
+      }
+    })
   }
 )
 
-// handle image rotation
+
+
+// initialisation
+captions[0].classList.add('active')
+handleDimension()
