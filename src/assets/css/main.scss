@@ -26,6 +26,7 @@ body {
         height: 100%;
         scroll-snap-align: center;
         perspective: 600px;
+        overflow: hidden;
 
         &-image {
           position: relative;
@@ -38,20 +39,21 @@ body {
             width: initial;
             object-fit: initial;
             transform-origin: left;
-            transform: rotateY(51.7deg);
+            transform: rotateY(45deg);
           }
 
           &--rotate-right {
+            position: absolute;
             max-width: initial;
             width: initial;
             object-fit: initial;
             transform-origin: right;
-            right: 454px;
-            transform: rotateY(-47.1deg);
+            right: 0;
+            transform: rotateY(-45deg);
           }
 
           &--center {
-            height: 43%;
+            height: 50%;
             transform: translateY(-50%);
             top: 50%;
             position: relative;

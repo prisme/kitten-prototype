@@ -170,6 +170,7 @@ body {
   perspective: 600px;
   flex-shrink: 0;
   position: relative;
+  overflow: hidden;
 }
 
 .kitten__home_slideshow-item-image {
@@ -184,7 +185,7 @@ body {
   width: initial;
   object-fit: initial;
   transform-origin: 0;
-  transform: rotateY(51.7deg);
+  transform: rotateY(45deg);
 }
 
 .kitten__home_slideshow-item-image--rotate-right {
@@ -192,12 +193,13 @@ body {
   width: initial;
   object-fit: initial;
   transform-origin: 100%;
-  right: 454px;
-  transform: rotateY(-47.1deg);
+  position: absolute;
+  right: 0;
+  transform: rotateY(-45deg);
 }
 
 .kitten__home_slideshow-item-image--center {
-  height: 43%;
+  height: 50%;
   position: relative;
   top: 50%;
   transform: translateY(-50%);

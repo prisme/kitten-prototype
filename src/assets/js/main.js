@@ -1,12 +1,13 @@
-console.log('js loaded');
+/**
+ *  HOME SLIDESHOW
+ */
 
 const slideshowContainer = document.getElementsByClassName('kitten__home_slideshow-container')[0];
 const slideshowItems = document.getElementsByClassName('kitten__home_slideshow-item');
 const cartons = Array.prototype.slice.call(document.getElementsByClassName('kitten__home_slideshow-item-title'));
-
 // initialize slideshow
 cartons[0].classList.add('active')
-
+// handle slide's title display
 slideshowContainer.addEventListener(
   'scroll',
   function() {
@@ -22,13 +23,7 @@ slideshowContainer.addEventListener(
         e.classList.remove('active')
       })
     }
-
-    
-
-    
-    console.log([scrollLeft, itemWidth, ctnrWidth, currentSlide, cartons])
-
-
-
   }
 )
+
+// handle image rotation
