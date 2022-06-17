@@ -27,6 +27,11 @@ window.resizeLeft = function () {
   }
 };
 
+window.onload = function () {
+  resizeLeft();
+  resizeRight();
+};
+
 const imagesRight = document.querySelectorAll(
   ".kitten__home_slideshow-item--rotate-right img"
 );
@@ -62,7 +67,11 @@ let handleDimension = function () {
   ctnrWidth = dimensions.reduce((prev, a) => prev + a, 0);
 };
 
-window.onresize = handleDimension;
+window.onresize = () => {
+  handleDimension();
+  resizeLeft();
+  resizeRight();
+};
 
 // handle slide's title display
 slideshowContainer.addEventListener("scroll", function () {
@@ -86,3 +95,32 @@ slideshowContainer.addEventListener("scroll", function () {
 // initialisation
 captions[0].classList.add("active");
 handleDimension();
+
+/* istanbul ignore next */
+function trueVhCalc() {
+  window.requestAnimationFrame(() => {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+    document.documentElement.style.setProperty("--vhh", `${vh}`);
+  });
+}
+
+function goTrueVhCalc(i, height0) {
+  if (window.innerHeight !== height0 || i >= 120) {
+    trueVhCalc();
+  } else {
+    window.requestAnimationFrame(() => {
+      goTrueVhCalc(i + 1, height0);
+    });
+  }
+}
+
+trueVhCalc();
+let trueVhCalcTick;
+window.addEventListener("orientationchange", () => {
+  goTrueVhCalc(0, window.innerHeight);
+});
+window.addEventListener("resize", () => {
+  window.cancelAnimationFrame(trueVhCalcTick);
+  trueVhCalcTick = window.requestAnimationFrame(trueVhCalc);
+});

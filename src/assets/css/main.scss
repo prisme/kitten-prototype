@@ -20,39 +20,51 @@ body {
       &-item {
         flex-shrink: 0;
         scroll-snap-align: start;
+        overflow: hidden;
+
+        &:last-child {
+          scroll-snap-align: end;
+        }
 
         &-wrapper {
           position: relative;
           perspective: 600px;
-          // overflow: hidden;
         }
 
         &-image {
           height: 100vh;
           width: auto;
           image-rendering: smooth;
+          border: 1px solid red;
         }
 
-        &--rotate-left img {
-          max-width: initial;
-          width: initial;
-          object-fit: initial;
-          transform-origin: left;
-          transform: rotateY(45deg);
+        &--rotate-left {
+          scroll-snap-align: start;
+          img {
+            max-width: initial;
+            width: initial;
+            object-fit: initial;
+            transform-origin: left center;
+            transform: rotateY(45deg);
+          }
         }
 
-        &--rotate-right img {
-          transform-origin: right;
-          transform: rotateY(-45deg);
+        &--rotate-right {
+          scroll-snap-align: end;
+          img {
+            transform-origin: right center;
+            transform: rotateY(-45deg);
+          }
         }
 
         &--center {
+          scroll-snap-align: center;
           img {
-            // height: 50%;
             height: 50vh;
-            transform: translateY(-50%);
-            top: 50%;
             position: relative;
+            top: 50vh;
+            transform: translateY(-50%);
+            // transform: translate3d(0, 0, -550px);
           }
         }
 
