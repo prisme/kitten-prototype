@@ -1,4 +1,4 @@
-/* /!\ You need to add vendor prefixes in order to render the CSS properly (or simply use http://leaverou.github.io/prefixfree/) /!\ */ #tridiv {
+#tridiv {
   perspective: 800px;
   position: absolute;
   overflow: hidden;
