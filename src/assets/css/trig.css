@@ -1,0 +1,28 @@
+.world {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  inset: 0;
+
+  overflow-y: scroll;
+  font-size: 100%; /* for ems */
+  perspective: 800px;
+}
+
+.scene,
+.plane {
+  position: absolute;
+  transform-style: preserve-3d;
+}
+
+.plane > *{
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.4);
+}
+
+.left{
+  transform-origin: left bottom;
+}
+
+.right{
+  transform-origin: right bottom;
+}
