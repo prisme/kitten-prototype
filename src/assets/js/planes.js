@@ -21,8 +21,10 @@ export default class {
     
     plane.geometry.setAttribute('position', new THREE.BufferAttribute( vertices, 3 ))
 
+    plane.scale.set(width, height)
+    plane.position.set(this.index, 0, 0)
 
-    // console.log(this.verticesCreator(width,height))
+    console.log(plane.position)
     // console.log([width, height, this.index, plane.geometry.attributes.position])
     this.scene.add(plane)
   }
@@ -31,13 +33,13 @@ export default class {
     let arr = []
 
     arr = [
-      width * -1, height * -1, 0,
-      width, height, 0,
-      width, height * -1, 0,
+      -1, -1, 0,
+      1, 1, 0,
+      1, -1, 0,
 
-      width, height, 0,
-      width * -1, height, 0,
-      width * -1, height * -1, 0
+      1, 1, 0,
+      -1, 1, 0,
+      -1, -1, 0
     ]
 
     return arr
