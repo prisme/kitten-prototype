@@ -1,6 +1,6 @@
 {
   "name": "kitten",
-  "source": "src/proto3.html",
+  "source": "src/index.html",
   "scripts": {
     "start": "parcel -p 7777",
     "build": "parcel build"
