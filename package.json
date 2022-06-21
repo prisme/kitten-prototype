@@ -6,8 +6,13 @@
     "build": "parcel build"
   },
   "devDependencies": {
+    "@parcel/transformer-glsl": "^2.6.0",
     "@parcel/transformer-sass": "^2.6.0",
     "parcel": "latest",
     "sass": "^1.52.3"
+  },
+  "dependencies": {
+    "ogl": "^0.0.93",
+    "three": "^0.141.0"
   }
 }

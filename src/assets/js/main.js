@@ -51,3 +51,23 @@ slideshowContainer.addEventListener(
 // initialisation
 captions[0].classList.add('active')
 handleDimension()
+
+
+
+
+// handle image rotation
+
+const ctnrRotateLeft = Array.prototype.slice.call(document.getElementsByClassName('kitten__home_slideshow-item--rotate-left'))
+const ctnrRotateRight = Array.prototype.slice.call(document.getElementsByClassName('kitten__home_slideshow-item--rotate-right'))
+
+const setImageContainerWidth = function(e) {
+  var img = e.firstElementChild
+  var ctnr = e.closest('li')
+
+  e.style['width'] = `${img.offsetWidth}px`
+  const imgWidth = img.getBoundingClientRect().width
+  ctnr.style['width'] = `${imgWidth}px`
+}
+
+ctnrRotateLeft.forEach(setImageContainerWidth)
+ctnrRotateRight.forEach(setImageContainerWidth)
