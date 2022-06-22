@@ -4,7 +4,7 @@
   position: absolute;
   inset: 0;
 
-  overflow-y: scroll;
+  overflow-x: scroll;
   font-size: 100%; /* for ems */
   perspective: 800px;
 }

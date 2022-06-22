@@ -9,20 +9,6 @@
 
   <body>
     <div class="world">
-      <!-- <div
-        class="scene"
-        style="
-          transform: rotateX(-88deg) rotateY(-10deg) rotateZ(0deg) scale(0.2)
-            translateY(20000px) translateX(1000px);
-        "
-      > -->
-      <!-- <div
-        class="scene"
-        style="
-          transform: rotateX(-40deg) rotateY(-10deg) rotateZ(0deg) scale(0.2)
-            translateY(1000px) translateX(1000px);
-        "
-      > -->
       <div
         class="scene"
         style="
@@ -40,7 +26,7 @@
           style="transform: translateX(800px) rotateY(7.66225566076605deg)"
         >
           <!-- 
-          90 - Math.acos(200/1500) * 180 / Math.PI
+          90 - Math.acos(Z/width courant) * 180 / Math.PI
           200 => translateZ
           1500 => hypothenuse, width of content
         -->
@@ -51,11 +37,11 @@
         <div
           class="plane back"
           style="
-            transform: translateX(calc(800px + 1500px - 14px))
+            transform: translateX(calc(800px + (1500px - 14px)))
               translateZ(-200px);
           "
         >
-          <!-- 14px => magic number -->
+          <!-- 1500px - 14px => x, with opposite -->
           <div
             style="width: 700px; height: 1000px; background-color: blue"
           ></div>
@@ -63,7 +49,7 @@
         <div
           class="plane right"
           style="
-            transform: translateX(calc(800px + 1500px + 700px - 24px))
+            transform: translateX(calc(800px + (1500px - 24px) + 700px))
               rotateY(-5.739170477266782deg);
           "
         >
