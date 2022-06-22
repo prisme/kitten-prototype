@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import Plane from './planes'
 
@@ -22,18 +23,17 @@ class App {
   }
  
   createRenderer () {
-    this.renderer = new THREE.WebGLRenderer({
-      alpha: true,
-      antialias: true,
+    this.renderer = new CSS3DRenderer({
+      // alpha: true,
+      // antialias: true,
     })
  
     document.body.appendChild(this.renderer.domElement)
   }
  
   createCamera () {
-    this.camera = new THREE.PerspectiveCamera()
-    this.camera.fov = 45
-    this.camera.position.z = 5
+    this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 5000 );
+    this.camera.position.z = 650
   }
  
   createScene () {
@@ -41,7 +41,7 @@ class App {
   }
 
   createOrbit() {
-    this.controls = new OrbitControls( this.camera, this.renderer.domElement );
+    // this.controls = new OrbitControls( this.camera, this.renderer.domElement );
   }
  
   /**
@@ -57,6 +57,8 @@ class App {
 
 
   createPlanes() {
+    let geoPat = [0,0,1]
+
     this.mediasElements = document.querySelectorAll('.kitten__home_slideshow-item-image')
     this.planes = Array.from(this.mediasElements).map((element, index) => {
       let plane = new Plane({
@@ -64,13 +66,12 @@ class App {
         element,
         geometry: this.planeGeometry,
         scene: this.scene,
-        viewport: this.viewport
+        viewport: this.viewport,
+        geoType: geoPat[index]
       })
 
       return plane
     })
-
-    console.log(this.viewport)
   }
  
   /**
@@ -89,6 +90,7 @@ class App {
     const fov = this.camera.fov * (Math.PI / 180)
     const height = 2 * Math.tan(fov / 2) * this.camera.position.z
     const width = height * this.camera.aspect
+
  
     this.viewport = {
       height,
@@ -107,7 +109,7 @@ class App {
       this.camera
     )
 
-    this.controls.update()
+    // this.controls.update()
  
     window.requestAnimationFrame(this.update.bind(this))
   }
