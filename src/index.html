@@ -1,120 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="assets/css/trig.css" />
-    <script type="module" src="assets/js/trig.js"></script>
-    <title>Kitten ⧎</title>
-  </head>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="assets/css/trig.css" />
+		<script type="module" src="assets/js/trig.js"></script>
+		<title>Kitten ⧎</title>
+	</head>
 
-  <body>
-    <div class="world">
-      <!-- <div
-        class="scene"
-        style="
-          transform: rotateX(-88deg) rotateY(-10deg) rotateZ(0deg) scale(0.2)
-            translateY(20000px) translateX(1000px);
-        "
-      > -->
-      <!-- <div
-        class="scene"
-        style="
-          transform: rotateX(-40deg) rotateY(-10deg) rotateZ(0deg) scale(0.2)
-            translateY(1000px) translateX(1000px);
-        "
-      > -->
-      <div
-        class="scene"
-        style="
-          transform: rotateX(0) rotateY(0) rotateZ(0deg) scale(1)
-            translateY(200px) translateX(200px);
-        "
-      >
-        <div class="plane front">
-          <div
-            style="width: 800px; height: 1000px; background-color: red"
-          ></div>
-        </div>
-
-
-
-
-        <div
-          class="plane left"
-          style="
-          transform: translateX(800px) 
-          /* rotateY(7.66225566076605deg) */
-          "
-        >
-          <!-- 
-          90 - Math.acos(200/1500) * 180 / Math.PI
-          200 => translateZ
-          1500 => hypothenuse, width of content
+	<body>
+		<div class="world">
+			<div class="scene">
+				<div class="plane front">
+					<div style="width: 800px; background-color: red"></div>
+				</div>
+				<div
+					class="plane left"
+					style="transform: translateX(800px) rotateY(0.13373158940994134rad)"
+				>
+					<!-- 
+          angle = (90 * Math.PI/180) - Math.acos(depth / width)
+          depth = 200
+          width = 1500
         -->
-          <div
-            style="width: 1500px; height: 1000px; background-color: green"
-          ></div>
-        </div>
+					<div style="width: 1500px; background-color: green"></div>
+				</div>
+				<div
+					class="plane back"
+					style="transform: translateX(calc(800px + 1486px)) translateZ(-200px)"
+				>
+					<!-- 
+            offset
+              = 1486 
+              = Math.sqrt( Math.pow(width, 2) - Math.pow(depth, 2) ) 
+          -->
+					<div style="width: 700px; background-color: blue"></div>
+				</div>
+				<div
+					class="plane right"
+					style="
+						transform: translateX(calc(800px + 1486px + 700px))
+							translateZ(-200px) rotateY(-0.10016742116155974rad);
+					"
+				>
+					<!-- 
+            angle = (90 * Math.PI/180) - Math.acos(depth / width)
+            depth = 200
+            width = 2000
+          -->
+					<div style="width: 2000px; background-color: magenta"></div>
+				</div>
+				<div
+					class="plane front"
+					style="
+						transform: translateX(calc(800px + 1486px + 700px + 1989.97px));
+					"
+				>
+					<!-- 
+            offset
+              = 1989.97 
+              = Math.sqrt( Math.pow(width, 2) - Math.pow(depth, 2) ) 
+          -->
+					<div
+						style="
+							width: 800px;
 
-
-
-
-        <div
-          class="plane back"
-          style="
-            /* transform: translateX(calc(800px + 1500px - 14px)) */
-              /* translateZ(-200px); */
-          "
-        >
-          <!-- 14px => magic number -->
-          <div
-            style="width: 700px; height: 1000px; background-color: blue"
-          ></div>
-        </div>
-
-
-
-
-        <div
-          class="plane right"
-          style="
-            /* transform: translateX(calc(800px + 1500px + 700px - 24px)) */
-              /* rotateY(-5.739170477266782deg); */
-          "
-        >
-          <!-- 
-          90 - Math.acos(200/2000) * 180 / Math.PI 
-          200 => translateZ
-          2000 => hypothenuse, width of content
-          24 px => magic number
-        -->
-          <div
-            style="width: 2000px; height: 1000px; background-color: magenta"
-          ></div>
-        </div>
-
-
-
-
-
-
-
-
-
-
-
-
-        <div class="plane front" style="transform: translateX(4976px)">
-          <div
-            style="
-              width: 800px;
-              height: 1000px;
-              background-color: rebeccapurple;
-            "
-          ></div>
-        </div>
-      </div>
-    </div>
-  </body>
+							background-color: rebeccapurple;
+						"
+					></div>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>
