@@ -18,6 +18,15 @@ export function containsClass(el, className) {
 	return [`${className}`].every((c) => el.classList.contains(c))
 }
 
+export function loadImage(url) {
+	return new Promise((resolve, reject) => {
+		const img = new Image()
+		img.addEventListener("load", () => resolve(img))
+		img.addEventListener("error", reject)
+		img.src = url
+	})
+}
+
 function trueVhCalc() {
 	window.requestAnimationFrame(() => {
 		const vh = window.innerHeight * 0.01

@@ -1,155 +1,53 @@
+:root {
+	--black: #000;
+	--white: #fff;
+}
+
 body {
-  background: black;
-  font-size: 16px;
+	background: var(--black);
+	color: var(--white);
+	font-size: 16px;
 }
 
 .kitten {
-  &__home {
-    &_slideshow {
-      height: 100vh;
+	position: relative;
 
-      &-container {
-        display: flex;
-        width: 100%;
-        height: 100%;
-        padding: 0;
-        overflow-x: scroll;
-        scroll-snap-type: x mandatory;
-      }
+	.world {
+		scroll-snap-type: x proximity;
 
-      &-item {
-        flex-shrink: 0;
-        scroll-snap-align: start;
-        overflow: hidden;
+		.plane {
+			scroll-snap-align: start;
+		}
+	}
 
-        &:last-child {
-          scroll-snap-align: end;
-        }
+	&__menu {
+		position: fixed;
+		z-index: 1;
+		width: 100vw;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
 
-        &-wrapper {
-          position: relative;
-          perspective: 600px;
-        }
+		&_logo {
+			position: relative;
+			font-size: 56px;
+			margin: 20px;
+		}
 
-        &-image {
-          height: 100vh;
-          width: auto;
-          image-rendering: smooth;
-          border: 1px solid red;
-        }
+		&_navigation {
+			cursor: pointer;
+			margin: 20px;
 
-        &--rotate-left {
-          scroll-snap-align: start;
-          img {
-            max-width: initial;
-            width: initial;
-            object-fit: initial;
-            transform-origin: left center;
-            transform: rotateY(45deg);
-          }
-        }
+			&-icon {
+				font-size: 30px;
+			}
 
-        &--rotate-right {
-          scroll-snap-align: end;
-          img {
-            transform-origin: right center;
-            transform: rotateY(-45deg);
-          }
-        }
-
-        &--center {
-          scroll-snap-align: center;
-          img {
-            height: 50vh;
-            position: relative;
-            top: 50vh;
-            transform: translateY(-50%);
-            // transform: translate3d(0, 0, -550px);
-          }
-        }
-
-        &-title {
-          font-weight: normal;
-          padding: 20px;
-          position: absolute;
-          bottom: 0;
-          opacity: 0;
-          visibility: hidden;
-          transition: visibility 0.1s linear, opacity 0.1s linear;
-          width: 100vw;
-
-          &.active {
-            opacity: 1;
-            visibility: visible;
-          }
-        }
-      }
-    }
-  }
-
-  &__menu {
-    position: fixed;
-    z-index: 10;
-    width: 100vw;
-    height: 70px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-
-    &_logo {
-      position: relative;
-      top: 14px;
-      font-size: 56px;
-      padding: 20px;
-    }
-
-    &_navigation {
-      cursor: pointer;
-      padding: 20px;
-
-      &-icon {
-        font-size: 30px;
-      }
-
-      nav {
-        position: absolute;
-        right: -100%;
-        visibility: hidden;
-      }
-    }
-  }
-}
-
-@media (min-width: 599px) {
-  .kitten__home_slideshow {
-    &-item {
-      width: initial;
-      // scroll-snap-align: start;
-
-      &--rotate-left {
-        // width: 70vw;
-
-        img {
-          transform: rotateY(20deg);
-        }
-      }
-
-      &--center {
-        // width: 30vw;
-
-        // img {
-        //   height: 55%;
-        // }
-      }
-
-      &--rotate-right {
-        // width: 70vw;
-
-        img {
-          transform: rotateY(-20deg);
-        }
-      }
-    }
-  }
+			nav {
+				position: absolute;
+				right: -100%;
+				visibility: hidden;
+			}
+		}
+	}
 }
