@@ -1,126 +1,92 @@
-/**
- *  HOME SLIDESHOW
- */
+import { deg2rad, vhCalc, hypothenuse, containsClass, loadImage } from "./utils"
 
-const slideshowContainer = document.getElementsByClassName(
-  "kitten__home_slideshow-container"
-)[0];
-const captions = Array.prototype.slice.call(
-  document.getElementsByClassName("kitten__home_slideshow-item-title")
-);
-const slideshowItems = Array.prototype.slice.call(
-  document.getElementsByClassName("kitten__home_slideshow-item")
-);
+document.addEventListener("DOMContentLoaded", () => {
+	const app = new App()
+	app.init()
+})
+export default class App {
+	constructor() {
+		this.offsetX = 0
+		this.depth = 600
+		this.planes = [...document.querySelectorAll(".plane")]
+		this.widths = []
+	}
 
-const imagesLeft = document.querySelectorAll(
-  ".kitten__home_slideshow-item--rotate-left img"
-);
+	async init() {
+		vhCalc()
+		this.widths = await this.getWidths()
+		this.applyTransform()
+	}
 
-window.resizeLeft = function () {
-  for (let i = 0; i < imagesLeft.length; i++) {
-    const img = imagesLeft[i];
-    const wrap = img.parentElement;
-    const item = wrap.parentElement;
+	async getWidths() {
+		return new Promise((resolve) => {
+			const height = window.innerHeight
+			let promises = []
+			let imgWidths = []
 
-    wrap.style.width = img.offsetWidth + "px";
-    item.style.width = img.getBoundingClientRect().width + "px";
-  }
-};
+			for (let i = 0; i < this.planes.length; i++) {
+				let imgEl = this.planes[i].querySelector("img")
+				let imgSrc = imgEl.src
 
-window.onload = function () {
-  resizeLeft();
-  resizeRight();
-};
+				promises.push(
+					loadImage(imgSrc)
+						.then((img) => {
+							const width = (img.naturalWidth / img.naturalHeight) * height
+							imgWidths.push(width)
+							imgEl.parentNode.style.width = `${width}px`
+						})
+						.catch((err) => console.error(err))
+				)
+			}
 
-const imagesRight = document.querySelectorAll(
-  ".kitten__home_slideshow-item--rotate-right img"
-);
+			Promise.all(promises).then(() => {
+				resolve(imgWidths)
+			})
+		})
+	}
 
-window.resizeRight = function () {
-  for (let i = 0; i < imagesRight.length; i++) {
-    const img = imagesRight[i];
-    const wrap = img.parentElement;
-    const item = wrap.parentElement;
+	applyTransform() {
+		for (let i = 0; i < this.planes.length; i++) {
+			const el = this.planes[i]
+			const width = this.widths[i]
 
-    wrap.style.width = img.offsetWidth + "px";
-    item.style.width = img.getBoundingClientRect().width + "px";
-    wrap.style.left =
-      -1 * (img.offsetWidth - img.getBoundingClientRect().width) + "px";
-  }
-};
+			if (containsClass(el, "front")) {
+				this.setFront(el, width)
+			} else if (containsClass(el, "left")) {
+				this.rotateLeft(el, width)
+			} else if (containsClass(el, "back")) {
+				this.pushBack(el, width)
+			} else if (containsClass(el, "right")) {
+				this.rotateRight(el, width)
+			}
+		}
+	}
 
-let dimensions = [];
-let currentSlide;
-let ctnrWidth;
-let edges;
+	setFront(el, width) {
+		el.style.transform = `translateX(${this.offsetX}px)`
+		this.offsetX += width
+	}
 
-// handle global variables's values on init and resize
-let handleDimension = function () {
-  dimensions = [];
-  slideshowItems.forEach(function (e, i) {
-    dimensions.push(e.offsetWidth);
-  });
-  edges = dimensions.map((elem, index) =>
-    dimensions.slice(0, index + 1).reduce((a, b) => a + b)
-  );
-  edges.unshift(0);
-  ctnrWidth = dimensions.reduce((prev, a) => prev + a, 0);
-};
+	pushBack(el, width) {
+		el.style.transform = `translateX(${this.offsetX}px) translateZ(-${this.depth}px)`
+		this.offsetX += width
+	}
 
-window.onresize = () => {
-  handleDimension();
-  resizeLeft();
-  resizeRight();
-};
+	rotateLeft(el, width) {
+		const angle = deg2rad(90) - Math.acos(this.depth / width)
+		const offset = hypothenuse(width, this.depth)
 
-// handle slide's title display
-slideshowContainer.addEventListener("scroll", function () {
-  let scrollLeft = slideshowContainer.scrollLeft;
+		el.style.transform = `translateX(${this.offsetX}px) rotateY(${angle}rad)`
 
-  edges.forEach(function (e, i) {
-    if (Math.ceil(scrollLeft) == e) {
-      currentSlide = i;
-      captions[currentSlide].classList.add("active");
-    } else if (
-      Math.ceil(scrollLeft) !== 0 &&
-      edges[currentSlide] !== Math.ceil(scrollLeft)
-    ) {
-      captions.forEach(function (e) {
-        e.classList.remove("active");
-      });
-    }
-  });
-});
+		this.offsetX += offset
+	}
 
-// initialisation
-captions[0].classList.add("active");
-handleDimension();
+	rotateRight(el, width) {
+		const angle = deg2rad(90) - Math.acos(this.depth / width)
+		const offset = hypothenuse(width, this.depth)
 
-/* istanbul ignore next */
-function trueVhCalc() {
-  window.requestAnimationFrame(() => {
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty("--vh", `${vh}px`);
-    document.documentElement.style.setProperty("--vhh", `${vh}`);
-  });
+		el.style.transform = `translateX(${this.offsetX}px) translateZ(-${this.depth}px) rotateY(-${angle}rad)`
+
+		this.offsetX += offset
+	}
 }
-
-function goTrueVhCalc(i, height0) {
-  if (window.innerHeight !== height0 || i >= 120) {
-    trueVhCalc();
-  } else {
-    window.requestAnimationFrame(() => {
-      goTrueVhCalc(i + 1, height0);
-    });
-  }
-}
-
-trueVhCalc();
-let trueVhCalcTick;
-window.addEventListener("orientationchange", () => {
-  goTrueVhCalc(0, window.innerHeight);
-});
-window.addEventListener("resize", () => {
-  window.cancelAnimationFrame(trueVhCalcTick);
-  trueVhCalcTick = window.requestAnimationFrame(trueVhCalc);
-});

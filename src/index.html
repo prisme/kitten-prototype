@@ -3,71 +3,90 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="stylesheet" href="assets/css/trig.css" />
-		<script type="module" src="assets/js/trig.js"></script>
-		<title>Kitten ⧎</title>
+		<link rel="stylesheet" href="assets/css/index.scss" />
+		<script type="module" src="assets/js/main.js"></script>
+		<title>Kitten</title>
 	</head>
 
 	<body>
-		<div class="world">
-			<div class="scene">
-				<div class="plane front">
-					<div style="width: 800px; background-color: red"></div>
+		<div class="kitten">
+			<div class="kitten__menu">
+				<span class="kitten__menu_logo icon-logo1"></span>
+				<div class="kitten__menu_navigation">
+					<span class="kitten__menu_navigation-icon icon-burger"></span>
+					<nav>
+						<ol>
+							<li class="kitten__menu_navigation-element">projects</li>
+							<li class="kitten__menu_navigation-element">archive / search</li>
+							<li class="kitten__menu_navigation-element">about</li>
+							<li class="kitten__menu_navigation-element">kittty</li>
+						</ol>
+					</nav>
 				</div>
-				<div
-					class="plane left"
-					style="transform: translateX(800px) rotateY(0.13373158940994134rad)"
-				>
-					<!-- 
-          angle = (90 * Math.PI/180) - Math.acos(depth / width)
-          depth = 200
-          width = 1500
-        -->
-					<div style="width: 1500px; background-color: green"></div>
-				</div>
-				<div
-					class="plane back"
-					style="transform: translateX(calc(800px + 1486px)) translateZ(-200px)"
-				>
-					<!-- 
-            offset
-              = 1486 
-              = Math.sqrt( Math.pow(width, 2) - Math.pow(depth, 2) ) 
-          -->
-					<div style="width: 700px; background-color: blue"></div>
-				</div>
-				<div
-					class="plane right"
-					style="
-						transform: translateX(calc(800px + 1486px + 700px))
-							translateZ(-200px) rotateY(-0.10016742116155974rad);
-					"
-				>
-					<!-- 
-            angle = (90 * Math.PI/180) - Math.acos(depth / width)
-            depth = 200
-            width = 2000
-          -->
-					<div style="width: 2000px; background-color: magenta"></div>
-				</div>
-				<div
-					class="plane front"
-					style="
-						transform: translateX(calc(800px + 1486px + 700px + 1989.97px));
-					"
-				>
-					<!-- 
-            offset
-              = 1989.97 
-              = Math.sqrt( Math.pow(width, 2) - Math.pow(depth, 2) ) 
-          -->
-					<div
-						style="
-							width: 800px;
+			</div>
 
-							background-color: rebeccapurple;
-						"
-					></div>
+			<div class="world">
+				<div class="scene">
+					<div class="plane front">
+						<img src="assets/img/01.jpg?as=webp&height=1000" alt="" />
+						<!-- <h2>project title</h2> -->
+					</div>
+					<div class="plane front">
+						<img src="assets/img/02.jpg?as=webp&height=1000" alt="" />
+						<!-- <h2>project title</h2> -->
+					</div>
+					<div class="plane left">
+						<img src="assets/img/03.jpg?as=webp&height=1000" alt="" />
+						<!-- <h2>project title</h2> -->
+					</div>
+					<div class="plane back">
+						<img src="assets/img/04.jpg?as=webp&height=1000" alt="" />
+						<!-- <h2>project title</h2> -->
+					</div>
+					<div class="plane right">
+						<img src="assets/img/05.jpg?as=webp&height=1000" alt="" />
+						<!-- <h2>project title</h2> -->
+					</div>
+					<div class="plane front">
+						<img src="assets/img/06.jpg?as=webp&height=1000" alt="" />
+						<!-- <h2>project title</h2> -->
+					</div>
+					<div class="plane front">
+						<img src="assets/img/07.jpg?as=webp&height=1000" alt="" />
+						<!-- <h2>project title</h2> -->
+					</div>
+					<div class="plane left">
+						<img src="assets/img/08.jpg?as=webp&height=1000" alt="" />
+						<!-- <h2>project title</h2> -->
+					</div>
+					<div class="plane back">
+						<img src="assets/img/09.jpg?as=webp&height=1000" alt="" />
+						<!-- <h2>project title</h2> -->
+					</div>
+					<div class="plane back">
+						<img src="assets/img/10.jpg?as=webp&height=1000" alt="" />
+						<!-- <h2>project title</h2> -->
+					</div>
+					<div class="plane right">
+						<img src="assets/img/11.png?as=webp&height=1000" alt="" />
+						<!-- <h2>project title</h2> -->
+					</div>
+					<div class="plane front">
+						<img src="assets/img/12.jpg?as=webp&height=1000" alt="" />
+						<!-- <h2>project title</h2> -->
+					</div>
+					<div class="plane left">
+						<img src="assets/img/13.jpg?as=webp&height=1000" alt="" />
+						<!-- <h2>project title</h2> -->
+					</div>
+					<div class="plane right">
+						<img src="assets/img/14.jpg?as=webp&height=1000" alt="" />
+						<!-- <h2>project title</h2> -->
+					</div>
+					<div class="plane front">
+						<img src="assets/img/15.jpg?as=webp&height=1000" alt="" />
+						<!-- <h2>project title</h2> -->
+					</div>
 				</div>
 			</div>
 		</div>
