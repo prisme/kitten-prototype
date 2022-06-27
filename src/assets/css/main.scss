@@ -13,7 +13,7 @@ body {
 	position: relative;
 
 	.world {
-		scroll-snap-type: x proximity;
+		scroll-snap-type: x mandatory;
 
 		.plane {
 			scroll-snap-align: start;

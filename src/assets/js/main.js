@@ -1,26 +1,35 @@
 import { deg2rad, vhCalc, hypothenuse, containsClass, loadImage } from "./utils"
 
+document.addEventListener("DOMContentLoaded", () => {
+	document.addEventListener("resize", () => {
+		// this.height = window.innerHeight
+	})
+})
+
 window.onload = () => {
 	const app = new App()
 	app.init()
 }
 export default class App {
 	constructor() {
+		this.height = 0
 		this.offsetX = 0
-		this.depth = 500
+		this.depth = 0
 		this.planes = [...document.querySelectorAll(".plane")]
 		this.widths = []
 	}
 
 	async init() {
 		vhCalc()
+		this.height = window.innerHeight
+		this.depth = 600
 		this.widths = await this.getWidths()
 		this.applyTransform()
 	}
 
 	async getWidths() {
 		return new Promise((resolve) => {
-			const height = window.innerHeight
+			const { height } = this
 			let promises = []
 			let imgWidths = []
 
