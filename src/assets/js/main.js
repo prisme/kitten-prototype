@@ -1,73 +1,92 @@
 import { deg2rad, vhCalc, hypothenuse, containsClass, loadImage } from "./utils"
 
-document.addEventListener("DOMContentLoaded", () => {
-	document.addEventListener("resize", () => {
-		// this.height = window.innerHeight
-	})
-})
-
 window.onload = () => {
 	const app = new App()
 	app.init()
 }
 export default class App {
 	constructor() {
-		this.height = 0
+		this.depth = 600
 		this.offsetX = 0
-		this.depth = 0
+		this.planeWidths = []
+		this.imageSizes = []
 		this.planes = [...document.querySelectorAll(".plane")]
-		this.widths = []
 	}
 
 	async init() {
 		vhCalc()
-		this.height = window.innerHeight
-		this.depth = 600
-		this.widths = await this.getWidths()
-		this.applyTransform()
+		this.imageSizes = await this.getImageSizes()
+		window.addEventListener("resize", this.onResize.bind(this))
+		this.onResize()
 	}
 
-	async getWidths() {
+	onResize() {
+		this.offsetX = 0
+		this.planeWidths = this.getPlaneWidths()
+		this.setTransform()
+	}
+
+	async getImageSizes() {
 		return new Promise((resolve) => {
-			const { height } = this
 			let promises = []
-			let imgWidths = []
+			let sizes = []
 
 			for (let i = 0; i < this.planes.length; i++) {
-				let imgEl = this.planes[i].querySelector("img")
-				let imgSrc = imgEl.src
+				const src = this.planes[i].querySelector("img").src
 
 				promises.push(
-					loadImage(imgSrc)
+					loadImage(src)
 						.then((img) => {
-							const width = (img.naturalWidth / img.naturalHeight) * height
-							imgWidths.push(width)
-							imgEl.parentNode.style.width = `${width}px`
+							sizes[i] = {
+								width: img.naturalWidth,
+								height: img.naturalHeight,
+							}
 						})
 						.catch((err) => console.error(err))
 				)
 			}
 
 			Promise.all(promises).then(() => {
-				resolve(imgWidths)
+				resolve(sizes)
 			})
 		})
 	}
 
-	applyTransform() {
-		for (let i = 0; i < this.planes.length; i++) {
-			const el = this.planes[i]
-			const width = this.widths[i]
+	getPlaneWidths() {
+		const { innerHeight } = window
 
-			if (containsClass(el, "front")) {
-				this.setFront(el, width)
-			} else if (containsClass(el, "left")) {
-				this.rotateLeft(el, width)
-			} else if (containsClass(el, "back")) {
-				this.pushBack(el, width)
-			} else if (containsClass(el, "right")) {
-				this.rotateRight(el, width)
-			}
+		return this.planes.reduce((planeWidths, _, index) => {
+			const { width, height } = this.imageSizes[index]
+
+			const ratioWidth = innerHeight * (width / height)
+			planeWidths.push(ratioWidth)
+			return planeWidths
+		}, [])
+	}
+
+	setTransform() {
+		const { planes, planeWidths, setFront, setBack, rotateLeft, rotateRight } =
+			this
+
+		for (let i = 0; i < planes.length; i++) {
+			const plane = planes[i]
+			const width = planeWidths[i]
+
+			plane.style.width = `${width}px`
+
+			const method = containsClass(plane, "front")
+				? setFront.bind(this)
+				: containsClass(plane, "back")
+				? setBack.bind(this)
+				: containsClass(plane, "left")
+				? rotateLeft.bind(this)
+				: containsClass(plane, "right")
+				? rotateRight.bind(this)
+				: () => {
+						console.error(`missing class on element: ${plane}`)
+				  }
+
+			method(plane, width)
 		}
 	}
 
@@ -76,7 +95,7 @@ export default class App {
 		this.offsetX += width
 	}
 
-	pushBack(el, width) {
+	setBack(el, width) {
 		el.style.transform = `translateX(${this.offsetX}px) translateZ(-${this.depth}px)`
 		this.offsetX += width
 	}
