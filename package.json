@@ -10,5 +10,8 @@
     "parcel": "latest",
     "sass": "^1.52.3",
     "sharp": "^0.29.3"
+  },
+  "dependencies": {
+    "dat.gui": "^0.7.9"
   }
 }

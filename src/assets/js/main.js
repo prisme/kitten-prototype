@@ -1,4 +1,7 @@
+import * as dat from "dat.gui"
 import { deg2rad, vhCalc, hypothenuse, containsClass, loadImage } from "./utils"
+
+const gui = new dat.GUI({ closeOnTop: true })
 
 window.onload = () => {
 	const app = new App()
@@ -6,7 +9,7 @@ window.onload = () => {
 }
 export default class App {
 	constructor() {
-		this.depth = 600
+		this.depth = 555
 		this.offsetX = 0
 		this.planeWidths = []
 		this.imageSizes = []
@@ -18,6 +21,14 @@ export default class App {
 		this.imageSizes = await this.getImageSizes()
 		window.addEventListener("resize", this.onResize.bind(this))
 		this.onResize()
+
+		gui
+			.add(this, "depth", 0, window.innerHeight)
+			.step(1)
+			.onChange((val) => {
+				this.depth = val
+				this.onResize()
+			})
 	}
 
 	onResize() {
