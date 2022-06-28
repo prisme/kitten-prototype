@@ -64,6 +64,11 @@ export default class App {
 		})
 	}
 
+	getEdges() {
+		let sum = 0
+		this.edges = this.planeWidths.map((value) => (sum += value))
+	}
+
 	createTooltip() {
 		this.tooltip = document.createElement("b")
 		this.tooltip.classList.add("kitten__tooltip")
@@ -80,9 +85,15 @@ export default class App {
 		})
 	}
 
-	getEdges() {
-		let sum = 0
-		this.edges = this.planeWidths.map((value) => (sum += value))
+	handleTitles() {
+		const pHolder = document.querySelector('.kitten__titles')
+		const title = this.activeSlide.getElementsByClassName('kitten__dummyTitles')[0].textContent
+		
+		document.querySelector('.world').addEventListener('scroll', () => {
+			pHolder.textContent = title
+		})
+
+		console.log('init titles', title)
 	}
 
 	getPlaneWidths() {
@@ -155,6 +166,34 @@ export default class App {
 	 * Events.
 	 */
 
+	 onIntersection(entries) {
+		entries.forEach((el,i) => {
+			if(el.isIntersecting) {
+				el.target.classList.add('active')
+			} else {
+				el.target.classList.remove('active')
+			}
+		})
+		
+		let visibleSlides = []
+		this.planes.forEach((el,i) => {
+			if(el.classList.contains('active')) {
+				visibleSlides.push(el)
+			}
+		})
+		
+		let visibleSlidesX = []
+		visibleSlides.forEach((el,i) => {
+			visibleSlidesX.push(el.getBoundingClientRect().x)
+		})
+
+		const min = Math.min(...visibleSlidesX)
+		const index = visibleSlidesX.indexOf(min)
+		this.activeSlide = visibleSlides[index]
+
+		this.handleTitles()
+	}
+
 	onTouchDown(event) {}
 
 	onTouchMove(event) {
@@ -214,6 +253,15 @@ export default class App {
 		this.planes.forEach((el) => {
 			clickAndHold.register(el, this.onClickAndHold.bind(this), 10)
 		})
+
+		this.observer = new IntersectionObserver(this.onIntersection.bind(this), {
+			root: null,
+			rootMargin: "0px",
+			threshold: 0.5,
+		})
+		for (let plane of this.planes) {
+			this.observer.observe(plane)
+		}
 
 		window.addEventListener("mousewheel", this.onWheel.bind(this))
 		window.addEventListener("wheel", this.onWheel.bind(this))

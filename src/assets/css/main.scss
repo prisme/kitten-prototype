@@ -21,6 +21,14 @@ body {
 		}
 	}
 
+	&__titles {
+		position: fixed;
+    bottom: 0;
+    font-size: 24px;
+    padding: 20px;
+		text-transform: uppercase;
+	}
+
 	&__tooltip {
 		font-family: Arial, sans-serif;
 		font-weight: lighter;
