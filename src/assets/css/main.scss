@@ -29,26 +29,26 @@ body {
 		font-size: 11px;
 		mix-blend-mode: difference;
 		position: fixed;
-		z-index: 100;
+		z-index: 3;
 		opacity: 1;
-		transition: opacity .3s linear;
+		transition: opacity 0.3s linear;
 	}
 
 	&__overlay {
 		width: 75%;
-    height: 100vh;
-    z-index: 10;
-    mix-blend-mode: difference;
-    position: absolute;
-    top: 0;
-    right: 0;
-    box-shadow: inset -300px 0 200px -180px #fff;
+		height: 100vh;
+		z-index: 1;
+		mix-blend-mode: difference;
+		position: absolute;
+		top: 0;
+		right: 0;
+		box-shadow: inset -300px 0 200px -180px #fff;
 		pointer-events: none;
 	}
 
 	&__menu {
 		position: fixed;
-		z-index: 1;
+		z-index: 2;
 		width: 100vw;
 		display: flex;
 		flex-direction: row;
