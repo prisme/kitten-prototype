@@ -21,6 +21,17 @@ body {
 		}
 	}
 
+	&__tooltip {
+		font-family: Arial, sans-serif;
+		font-family: 12px;
+		// text-transform: uppercase;
+		mix-blend-mode: difference;
+		position: fixed;
+		z-index: 100;
+		opacity: 1;
+		transition: opacity .3s linear;
+	}
+
 	&__overlay {
 		width: 75%;
     height: 100vh;

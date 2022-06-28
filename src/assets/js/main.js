@@ -25,9 +25,23 @@ export default class App {
 		vhCalc()
 		this.imageSizes = await this.getImageSizes()
 		this.onResize()
-		
+
 		document.querySelector('.world').scrollLeft = 0
 		
+		this.tooltip = document.createElement('b')
+		this.tooltip.classList.add('kitten__tooltip')
+		this.tooltip.innerText = "Click'n Hold"
+		document.querySelector('.kitten').appendChild(this.tooltip)
+
+		this.planes.forEach((el,i) => {
+			el.addEventListener('mouseenter', () => {
+				this.showTooltip = true
+			})
+			el.addEventListener('mouseleave', () => {
+				this.showTooltip = false
+			})
+		})
+
 		gui
 			.add(this, "depth", 0, window.innerHeight)
 			.step(1)
@@ -138,10 +152,26 @@ export default class App {
   }
 
   onTouchMove (event) {
+		this.cursorPosition = {
+			x: event.clientX,
+			y: event.clientY
+		}
+
+		
+
+		if(this.showTooltip) {
+			this.tooltip.style.top = `${this.cursorPosition.y + 33}px`
+			this.tooltip.style.left = `${this.cursorPosition.x - (this.tooltip.getBoundingClientRect().width / 2)}px`
+			this.tooltip.style.opacity = 1
+		} else {
+			this.tooltip.style.opacity = 0
+		}
   }
 
   onTouchUp (event) {
 		this.clickCount = 0
+
+		this.tooltip.style.opacity = 1
   }
 
   onWheel (event) {
@@ -150,7 +180,11 @@ export default class App {
 	onClickAndHold() {
 		this.clickCount += 1
 
-		if(this.clickCount === 2) {
+		console.log('click')
+
+		this.tooltip.style.opacity = 0
+
+		if(this.clickCount === 200) {
 			console.log('click hold event')
 		}
 	}
@@ -175,7 +209,7 @@ export default class App {
     window.addEventListener('resize', this.onResize.bind(this))
 
 		this.planes.forEach((el) => {
-			clickAndHold.register(el, this.onClickAndHold.bind(this), 1000)
+			clickAndHold.register(el, this.onClickAndHold.bind(this), 10)
 		})
 
     window.addEventListener('mousewheel', this.onWheel.bind(this))
