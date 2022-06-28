@@ -7,7 +7,6 @@ const gui = new dat.GUI({ closeOnTop: true })
 window.onload = () => {
 	const app = new App()
 	app.init()
-
 }
 export default class App {
 	constructor() {
@@ -28,19 +27,9 @@ export default class App {
 
 		document.querySelector('.world').scrollLeft = 0
 		
-		this.tooltip = document.createElement('b')
-		this.tooltip.classList.add('kitten__tooltip')
-		this.tooltip.innerText = "Click'n Hold"
-		document.querySelector('.kitten').appendChild(this.tooltip)
-
-		this.planes.forEach((el,i) => {
-			el.addEventListener('mouseenter', () => {
-				this.showTooltip = true
-			})
-			el.addEventListener('mouseleave', () => {
-				this.showTooltip = false
-			})
-		})
+		
+		this.createTooltip()
+		this.getEdges()
 
 		gui
 			.add(this, "depth", 0, window.innerHeight)
@@ -75,6 +64,27 @@ export default class App {
 				resolve(sizes)
 			})
 		})
+	}
+
+	createTooltip() {
+		this.tooltip = document.createElement('b')
+		this.tooltip.classList.add('kitten__tooltip')
+		this.tooltip.innerText = "Click'n Hold"
+		document.querySelector('.kitten').appendChild(this.tooltip)
+
+		this.planes.forEach((el,i) => {
+			el.addEventListener('mouseenter', () => {
+				this.showTooltip = true
+			})
+			el.addEventListener('mouseleave', () => {
+				this.showTooltip = false
+			})
+		})
+	}
+
+	getEdges() {
+		let sum = 0
+		this.edges = this.planeWidths.map(value => sum += value)
 	}
 
 	getPlaneWidths() {
@@ -157,8 +167,6 @@ export default class App {
 			y: event.clientY
 		}
 
-		
-
 		if(this.showTooltip) {
 			this.tooltip.style.top = `${this.cursorPosition.y + 33}px`
 			this.tooltip.style.left = `${this.cursorPosition.x - (this.tooltip.getBoundingClientRect().width / 2)}px`
@@ -170,7 +178,6 @@ export default class App {
 
   onTouchUp (event) {
 		this.clickCount = 0
-
 		this.tooltip.style.opacity = 1
   }
 
@@ -179,8 +186,6 @@ export default class App {
 
 	onClickAndHold() {
 		this.clickCount += 1
-
-		console.log('click')
 
 		this.tooltip.style.opacity = 0
 
@@ -197,6 +202,9 @@ export default class App {
 	onResize() {
 		this.offsetX = 0
 		this.planeWidths = this.getPlaneWidths()
+
+		this.getEdges()
+
 		this.setTransform()
 	}
 
