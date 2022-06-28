@@ -12,6 +12,7 @@
     "sharp": "^0.29.3"
   },
   "dependencies": {
+    "dat-gui": "^0.5.0",
     "dat.gui": "^0.7.9"
   }
 }
