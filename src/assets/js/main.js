@@ -1,6 +1,9 @@
 import * as dat from "dat.gui"
-import clickAndHold from "click-and-hold"
+import { gsap } from "gsap"
+import { Observer } from "gsap/Observer"
 import { deg2rad, vhCalc, hypothenuse, containsClass, loadImage } from "./utils"
+
+const gui = new dat.GUI({ closeOnTop: false })
 
 window.onload = () => {
 	const app = new App()
@@ -8,27 +11,33 @@ window.onload = () => {
 }
 export default class App {
 	constructor() {
+		this.clickHold = {
+			tooltip: null,
+			interval: null,
+			showTooltip: false,
+			clickCount: 0,
+			current: 0,
+			cursorPosition: { x: 0, y: 0 },
+		}
+
 		this.depth = 555
 		this.offsetX = 0
 		this.planeWidths = []
 		this.imageSizes = []
-		this.clickCount = 0
+		this.edges = []
 		this.planes = [...document.querySelectorAll(".plane")]
-
-		this.addEventListeners()
+		gsap.registerPlugin(Observer)
 	}
 
 	async init() {
 		vhCalc()
 		this.imageSizes = await this.getImageSizes()
 		this.onResize()
+		this.createTooltip()
+		this.addEventListeners()
 
 		document.querySelector(".world").scrollLeft = 0
 
-		this.createTooltip()
-		this.getEdges()
-
-		const gui = new dat.GUI({ closeOnTop: false })
 		gui
 			.add(this, "depth", 0, window.innerHeight)
 			.step(1)
@@ -70,30 +79,20 @@ export default class App {
 	}
 
 	createTooltip() {
-		this.tooltip = document.createElement("b")
-		this.tooltip.classList.add("kitten__tooltip")
-		this.tooltip.innerText = "Click'n Hold"
-		document.querySelector(".kitten").appendChild(this.tooltip)
+		const { clickHold } = this
+		clickHold.tooltip = document.createElement("b")
+		clickHold.tooltip.classList.add("kitten__tooltip")
+		clickHold.tooltip.innerText = "Click'n Hold"
+		document.querySelector(".kitten").appendChild(clickHold.tooltip)
 
 		this.planes.forEach((el, i) => {
 			el.addEventListener("mouseenter", () => {
-				this.showTooltip = true
+				clickHold.showTooltip = true
 			})
 			el.addEventListener("mouseleave", () => {
-				this.showTooltip = false
+				clickHold.showTooltip = false
 			})
 		})
-	}
-
-	handleTitles() {
-		const pHolder = document.querySelector('.kitten__titles')
-		const title = this.activeSlide.getElementsByClassName('kitten__dummyTitles')[0].textContent
-		
-		document.querySelector('.world').addEventListener('scroll', () => {
-			pHolder.textContent = title
-		})
-
-		console.log('init titles', title)
 	}
 
 	getPlaneWidths() {
@@ -106,6 +105,19 @@ export default class App {
 			planeWidths.push(ratioWidth)
 			return planeWidths
 		}, [])
+	}
+
+	handleTitles() {
+		const pHolder = document.querySelector(".kitten__titles")
+		const title = this.activeSlide.getElementsByClassName(
+			"kitten__dummyTitles"
+		)[0].textContent
+
+		document.querySelector(".world").addEventListener("scroll", () => {
+			pHolder.textContent = title
+		})
+
+		console.log("init titles", title)
 	}
 
 	setTransform() {
@@ -166,24 +178,24 @@ export default class App {
 	 * Events.
 	 */
 
-	 onIntersection(entries) {
-		entries.forEach((el,i) => {
-			if(el.isIntersecting) {
-				el.target.classList.add('active')
+	onIntersection(entries) {
+		entries.forEach((el, i) => {
+			if (el.isIntersecting) {
+				el.target.classList.add("active")
 			} else {
-				el.target.classList.remove('active')
+				el.target.classList.remove("active")
 			}
 		})
-		
+
 		let visibleSlides = []
-		this.planes.forEach((el,i) => {
-			if(el.classList.contains('active')) {
+		this.planes.forEach((el, i) => {
+			if (el.classList.contains("active")) {
 				visibleSlides.push(el)
 			}
 		})
-		
+
 		let visibleSlidesX = []
-		visibleSlides.forEach((el,i) => {
+		visibleSlides.forEach((el, i) => {
 			visibleSlidesX.push(el.getBoundingClientRect().x)
 		})
 
@@ -197,38 +209,28 @@ export default class App {
 	onTouchDown(event) {}
 
 	onTouchMove(event) {
-		this.cursorPosition = {
+		const { clickHold } = this
+
+		clickHold.cursorPosition = {
 			x: event.clientX,
 			y: event.clientY,
 		}
 
-		if (this.showTooltip) {
-			this.tooltip.style.top = `${this.cursorPosition.y + 33}px`
-			this.tooltip.style.left = `${
-				this.cursorPosition.x - this.tooltip.getBoundingClientRect().width / 2
+		if (clickHold.showTooltip) {
+			clickHold.tooltip.style.top = `${clickHold.cursorPosition.y + 33}px`
+			clickHold.tooltip.style.left = `${
+				clickHold.cursorPosition.x -
+				clickHold.tooltip.getBoundingClientRect().width / 2
 			}px`
-			this.tooltip.style.opacity = 1
+			clickHold.tooltip.style.opacity = 1
 		} else {
-			this.tooltip.style.opacity = 0
+			clickHold.tooltip.style.opacity = 0
 		}
 	}
 
-	onTouchUp(event) {
-		this.clickCount = 0
-		this.tooltip.style.opacity = 1
-	}
+	onTouchUp(event) {}
 
 	onWheel(event) {}
-
-	onClickAndHold() {
-		this.clickCount += 1
-
-		this.tooltip.style.opacity = 0
-
-		if (this.clickCount === 200) {
-			console.log("click hold event")
-		}
-	}
 
 	/**
 	 * Resize.
@@ -237,9 +239,7 @@ export default class App {
 	onResize() {
 		this.offsetX = 0
 		this.planeWidths = this.getPlaneWidths()
-
-		this.getEdges()
-
+		this.edges = this.planeWidths.reduce((prev, curr) => prev + curr, 0)
 		this.setTransform()
 	}
 
@@ -249,9 +249,43 @@ export default class App {
 
 	addEventListeners() {
 		window.addEventListener("resize", this.onResize.bind(this))
+		window.addEventListener("orientationchange", this.onResize.bind(this))
 
-		this.planes.forEach((el) => {
-			clickAndHold.register(el, this.onClickAndHold.bind(this), 10)
+		Observer.create({
+			type: "wheel,touch,pointer",
+			wheelSpeed: -1,
+			onHover: (event) => {},
+			onPress: (event) => {
+				const { clickHold } = this
+				if (clickHold.interval) clearInterval(clickHold.interval)
+				clickHold.tooltip.style.opacity = 0
+				clickHold.interval = setInterval(() => {
+					clickHold.current += 1
+					if (clickHold.current >= 2) {
+						console.log("click hold event")
+					}
+				}, 1000)
+			},
+			onRelease: (event) => {
+				const { clickHold } = this
+				if (clickHold.interval) clearInterval(clickHold.interval)
+				clickHold.current = 0
+				clickHold.tooltip.style.opacity = 1
+			},
+			onDown: () => {
+				console.log("down")
+			},
+			onUp: () => {
+				console.log("up")
+			},
+			onLeft: () => {
+				console.log("left")
+			},
+			onRight: () => {
+				console.log("right")
+			},
+			tolerance: 10,
+			preventDefault: false,
 		})
 
 		this.observer = new IntersectionObserver(this.onIntersection.bind(this), {
@@ -266,12 +300,12 @@ export default class App {
 		window.addEventListener("mousewheel", this.onWheel.bind(this))
 		window.addEventListener("wheel", this.onWheel.bind(this))
 
-		window.addEventListener("mousedown", this.onTouchDown.bind(this))
-		window.addEventListener("mousemove", this.onTouchMove.bind(this))
-		window.addEventListener("mouseup", this.onTouchUp.bind(this))
-
-		window.addEventListener("touchstart", this.onTouchDown.bind(this))
 		window.addEventListener("touchmove", this.onTouchMove.bind(this))
-		window.addEventListener("touchend", this.onTouchUp.bind(this))
+		window.addEventListener("mousemove", this.onTouchMove.bind(this))
+
+		// window.addEventListener("touchstart", this.onTouchDown.bind(this))
+		// window.addEventListener("mousedown", this.onTouchDown.bind(this))
+		// window.addEventListener("mouseup", this.onTouchUp.bind(this))
+		// window.addEventListener("touchend", this.onTouchUp.bind(this))
 	}
 }
