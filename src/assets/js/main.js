@@ -1,9 +1,6 @@
 import * as dat from "dat.gui"
 import clickAndHold from "click-and-hold"
 import { deg2rad, vhCalc, hypothenuse, containsClass, loadImage } from "./utils"
-import clickAndHold from "click-and-hold"
-
-const gui = new dat.GUI({ closeOnTop: true })
 
 window.onload = () => {
 	const app = new App()
@@ -19,11 +16,6 @@ export default class App {
 		this.planes = [...document.querySelectorAll(".plane")]
 
 		this.addEventListeners()
-		this.observer = new IntersectionObserver(this.onIntersection.bind(this), {
-			root: null,
-			rootMargin: "0px",
-			threshold: 0.5,
-		})
 	}
 
 	async init() {
@@ -33,24 +25,10 @@ export default class App {
 
 		document.querySelector(".world").scrollLeft = 0
 
-		this.tooltip = document.createElement("b")
-		this.tooltip.classList.add("kitten__tooltip")
-		this.tooltip.innerText = "Click'n Hold"
-		document.querySelector(".kitten").appendChild(this.tooltip)
+		this.createTooltip()
+		this.getEdges()
 
-		this.planes.forEach((el, i) => {
-			el.addEventListener("mouseenter", () => {
-				this.showTooltip = true
-			})
-			el.addEventListener("mouseleave", () => {
-				this.showTooltip = false
-			})
-		})
-
-		for (let plane of this.planes) {
-			this.observer.observe(plane)
-		}
-
+		const gui = new dat.GUI({ closeOnTop: false })
 		gui
 			.add(this, "depth", 0, window.innerHeight)
 			.step(1)
@@ -86,6 +64,11 @@ export default class App {
 		})
 	}
 
+	getEdges() {
+		let sum = 0
+		this.edges = this.planeWidths.map((value) => (sum += value))
+	}
+
 	createTooltip() {
 		this.tooltip = document.createElement("b")
 		this.tooltip.classList.add("kitten__tooltip")
@@ -102,9 +85,15 @@ export default class App {
 		})
 	}
 
-	getEdges() {
-		let sum = 0
-		this.edges = this.planeWidths.map((value) => (sum += value))
+	handleTitles() {
+		const pHolder = document.querySelector('.kitten__titles')
+		const title = this.activeSlide.getElementsByClassName('kitten__dummyTitles')[0].textContent
+		
+		document.querySelector('.world').addEventListener('scroll', () => {
+			pHolder.textContent = title
+		})
+
+		console.log('init titles', title)
 	}
 
 	getPlaneWidths() {
@@ -177,13 +166,32 @@ export default class App {
 	 * Events.
 	 */
 
-	onIntersection(entries) {
-		// console.log(entries)
-		for (let entry of entries) {
-			if (entry.intersectionRatio >= 0.5) {
-				console.log("I am visible!", entry.target)
+	 onIntersection(entries) {
+		entries.forEach((el,i) => {
+			if(el.isIntersecting) {
+				el.target.classList.add('active')
+			} else {
+				el.target.classList.remove('active')
 			}
-		}
+		})
+		
+		let visibleSlides = []
+		this.planes.forEach((el,i) => {
+			if(el.classList.contains('active')) {
+				visibleSlides.push(el)
+			}
+		})
+		
+		let visibleSlidesX = []
+		visibleSlides.forEach((el,i) => {
+			visibleSlidesX.push(el.getBoundingClientRect().x)
+		})
+
+		const min = Math.min(...visibleSlidesX)
+		const index = visibleSlidesX.indexOf(min)
+		this.activeSlide = visibleSlides[index]
+
+		this.handleTitles()
 	}
 
 	onTouchDown(event) {}
@@ -215,8 +223,6 @@ export default class App {
 	onClickAndHold() {
 		this.clickCount += 1
 
-		console.log("click")
-
 		this.tooltip.style.opacity = 0
 
 		if (this.clickCount === 200) {
@@ -243,11 +249,19 @@ export default class App {
 
 	addEventListeners() {
 		window.addEventListener("resize", this.onResize.bind(this))
-		window.addEventListener("orientationchange", this.onResize.bind(this))
 
 		this.planes.forEach((el) => {
 			clickAndHold.register(el, this.onClickAndHold.bind(this), 10)
 		})
+
+		this.observer = new IntersectionObserver(this.onIntersection.bind(this), {
+			root: null,
+			rootMargin: "0px",
+			threshold: 0.5,
+		})
+		for (let plane of this.planes) {
+			this.observer.observe(plane)
+		}
 
 		window.addEventListener("mousewheel", this.onWheel.bind(this))
 		window.addEventListener("wheel", this.onWheel.bind(this))
