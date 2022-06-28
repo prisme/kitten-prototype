@@ -1,11 +1,13 @@
 import * as dat from "dat.gui"
 import { deg2rad, vhCalc, hypothenuse, containsClass, loadImage } from "./utils"
+import clickAndHold from 'click-and-hold';
 
 const gui = new dat.GUI({ closeOnTop: true })
 
 window.onload = () => {
 	const app = new App()
 	app.init()
+
 }
 export default class App {
 	constructor() {
@@ -13,15 +15,19 @@ export default class App {
 		this.offsetX = 0
 		this.planeWidths = []
 		this.imageSizes = []
+		this.clickCount = 0
 		this.planes = [...document.querySelectorAll(".plane")]
+
+		this.addEventListeners()
 	}
 
 	async init() {
 		vhCalc()
 		this.imageSizes = await this.getImageSizes()
-		window.addEventListener("resize", this.onResize.bind(this))
 		this.onResize()
-
+		
+		document.querySelector('.world').scrollLeft = 0
+		
 		gui
 			.add(this, "depth", 0, window.innerHeight)
 			.step(1)
@@ -29,12 +35,6 @@ export default class App {
 				this.depth = val
 				this.onResize()
 			})
-	}
-
-	onResize() {
-		this.offsetX = 0
-		this.planeWidths = this.getPlaneWidths()
-		this.setTransform()
 	}
 
 	async getImageSizes() {
@@ -128,4 +128,65 @@ export default class App {
 
 		this.offsetX += offset
 	}
+
+
+	/**
+   * Events.
+   */
+
+	onTouchDown (event) {
+  }
+
+  onTouchMove (event) {
+  }
+
+  onTouchUp (event) {
+		this.clickCount = 0
+  }
+
+  onWheel (event) {
+  }
+
+	onClickAndHold() {
+		this.clickCount += 1
+
+		if(this.clickCount === 2) {
+			console.log('click hold event')
+		}
+	}
+
+
+	/**
+	 * Resize.
+	 */
+
+	onResize() {
+		this.offsetX = 0
+		this.planeWidths = this.getPlaneWidths()
+		this.setTransform()
+	}
+
+
+	/**
+   * Listeners.
+   */
+
+	addEventListeners () {
+    window.addEventListener('resize', this.onResize.bind(this))
+
+		this.planes.forEach((el) => {
+			clickAndHold.register(el, this.onClickAndHold.bind(this), 1000)
+		})
+
+    window.addEventListener('mousewheel', this.onWheel.bind(this))
+    window.addEventListener('wheel', this.onWheel.bind(this))
+
+    window.addEventListener('mousedown', this.onTouchDown.bind(this))
+    window.addEventListener('mousemove', this.onTouchMove.bind(this))
+    window.addEventListener('mouseup', this.onTouchUp.bind(this))
+
+    window.addEventListener('touchstart', this.onTouchDown.bind(this))
+    window.addEventListener('touchmove', this.onTouchMove.bind(this))
+    window.addEventListener('touchend', this.onTouchUp.bind(this))
+  }
 }
