@@ -7,6 +7,7 @@ body {
 	background: var(--black);
 	color: var(--white);
 	font-size: 16px;
+	overscroll-behavior: none;
 }
 
 .kitten {
