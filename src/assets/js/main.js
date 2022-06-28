@@ -1,8 +1,6 @@
 import * as dat from "dat.gui"
+import clickAndHold from "click-and-hold"
 import { deg2rad, vhCalc, hypothenuse, containsClass, loadImage } from "./utils"
-import clickAndHold from 'click-and-hold';
-
-const gui = new dat.GUI({ closeOnTop: true })
 
 window.onload = () => {
 	const app = new App()
@@ -25,12 +23,12 @@ export default class App {
 		this.imageSizes = await this.getImageSizes()
 		this.onResize()
 
-		document.querySelector('.world').scrollLeft = 0
-		
-		
+		document.querySelector(".world").scrollLeft = 0
+
 		this.createTooltip()
 		this.getEdges()
 
+		const gui = new dat.GUI({ closeOnTop: false })
 		gui
 			.add(this, "depth", 0, window.innerHeight)
 			.step(1)
@@ -67,16 +65,16 @@ export default class App {
 	}
 
 	createTooltip() {
-		this.tooltip = document.createElement('b')
-		this.tooltip.classList.add('kitten__tooltip')
+		this.tooltip = document.createElement("b")
+		this.tooltip.classList.add("kitten__tooltip")
 		this.tooltip.innerText = "Click'n Hold"
-		document.querySelector('.kitten').appendChild(this.tooltip)
+		document.querySelector(".kitten").appendChild(this.tooltip)
 
-		this.planes.forEach((el,i) => {
-			el.addEventListener('mouseenter', () => {
+		this.planes.forEach((el, i) => {
+			el.addEventListener("mouseenter", () => {
 				this.showTooltip = true
 			})
-			el.addEventListener('mouseleave', () => {
+			el.addEventListener("mouseleave", () => {
 				this.showTooltip = false
 			})
 		})
@@ -84,7 +82,7 @@ export default class App {
 
 	getEdges() {
 		let sum = 0
-		this.edges = this.planeWidths.map(value => sum += value)
+		this.edges = this.planeWidths.map((value) => (sum += value))
 	}
 
 	getPlaneWidths() {
@@ -153,47 +151,45 @@ export default class App {
 		this.offsetX += offset
 	}
 
-
 	/**
-   * Events.
-   */
+	 * Events.
+	 */
 
-	onTouchDown (event) {
-  }
+	onTouchDown(event) {}
 
-  onTouchMove (event) {
+	onTouchMove(event) {
 		this.cursorPosition = {
 			x: event.clientX,
-			y: event.clientY
+			y: event.clientY,
 		}
 
-		if(this.showTooltip) {
+		if (this.showTooltip) {
 			this.tooltip.style.top = `${this.cursorPosition.y + 33}px`
-			this.tooltip.style.left = `${this.cursorPosition.x - (this.tooltip.getBoundingClientRect().width / 2)}px`
+			this.tooltip.style.left = `${
+				this.cursorPosition.x - this.tooltip.getBoundingClientRect().width / 2
+			}px`
 			this.tooltip.style.opacity = 1
 		} else {
 			this.tooltip.style.opacity = 0
 		}
-  }
+	}
 
-  onTouchUp (event) {
+	onTouchUp(event) {
 		this.clickCount = 0
 		this.tooltip.style.opacity = 1
-  }
+	}
 
-  onWheel (event) {
-  }
+	onWheel(event) {}
 
 	onClickAndHold() {
 		this.clickCount += 1
 
 		this.tooltip.style.opacity = 0
 
-		if(this.clickCount === 200) {
-			console.log('click hold event')
+		if (this.clickCount === 200) {
+			console.log("click hold event")
 		}
 	}
-
 
 	/**
 	 * Resize.
@@ -208,27 +204,26 @@ export default class App {
 		this.setTransform()
 	}
 
-
 	/**
-   * Listeners.
-   */
+	 * Listeners.
+	 */
 
-	addEventListeners () {
-    window.addEventListener('resize', this.onResize.bind(this))
+	addEventListeners() {
+		window.addEventListener("resize", this.onResize.bind(this))
 
 		this.planes.forEach((el) => {
 			clickAndHold.register(el, this.onClickAndHold.bind(this), 10)
 		})
 
-    window.addEventListener('mousewheel', this.onWheel.bind(this))
-    window.addEventListener('wheel', this.onWheel.bind(this))
+		window.addEventListener("mousewheel", this.onWheel.bind(this))
+		window.addEventListener("wheel", this.onWheel.bind(this))
 
-    window.addEventListener('mousedown', this.onTouchDown.bind(this))
-    window.addEventListener('mousemove', this.onTouchMove.bind(this))
-    window.addEventListener('mouseup', this.onTouchUp.bind(this))
+		window.addEventListener("mousedown", this.onTouchDown.bind(this))
+		window.addEventListener("mousemove", this.onTouchMove.bind(this))
+		window.addEventListener("mouseup", this.onTouchUp.bind(this))
 
-    window.addEventListener('touchstart', this.onTouchDown.bind(this))
-    window.addEventListener('touchmove', this.onTouchMove.bind(this))
-    window.addEventListener('touchend', this.onTouchUp.bind(this))
-  }
+		window.addEventListener("touchstart", this.onTouchDown.bind(this))
+		window.addEventListener("touchmove", this.onTouchMove.bind(this))
+		window.addEventListener("touchend", this.onTouchUp.bind(this))
+	}
 }
