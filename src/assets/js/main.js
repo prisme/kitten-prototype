@@ -1,7 +1,8 @@
 import * as dat from 'dat.gui'
 import { gsap } from 'gsap'
 import { Observer } from 'gsap/Observer'
-import { deg2rad, vhCalc, hypothenuse, containsClass, loadImage } from './utils'
+import { getDeviceType, deg2rad, vhCalc, hypothenuse, containsClass, loadImage } from './utils'
+gsap.registerPlugin(Observer)
 
 const gui = new dat.GUI({ closeOnTop: false })
 
@@ -11,6 +12,7 @@ window.onload = () => {
 }
 export default class App {
 	constructor() {
+		this.isDesktop = getDeviceType() === 'desktop'
 		this.intersection = null
 		this.depth = 555
 		this.offsetX = 0
@@ -33,8 +35,6 @@ export default class App {
 			current: 0,
 			cursorPosition: { x: 0, y: 0 },
 		}
-		gsap.registerPlugin(Observer)
-		console.log(this.currentTitle)
 	}
 
 	async init() {
@@ -87,10 +87,13 @@ export default class App {
 	createTooltip() {
 		const { planes } = this.nodes
 		const { clickHold: hold } = this
-		hold.tooltip = document.createElement('b')
-		hold.tooltip.classList.add('kitten__tooltip')
-		hold.tooltip.innerText = "Click'n Hold"
-		document.querySelector('.kitten').appendChild(hold.tooltip)
+
+		if(this.isDesktop) {
+			hold.tooltip = document.createElement('b')
+			hold.tooltip.classList.add('kitten__tooltip')
+			hold.tooltip.innerText = "Click'n Hold"
+			document.querySelector('.kitten').appendChild(hold.tooltip)
+		}
 
 		planes.forEach((el, i) => {
 			el.addEventListener('mouseenter', () => {
@@ -211,7 +214,7 @@ export default class App {
 	onTouchMove(event) {
 		const { clickHold: hold } = this
 
-		if (!hold.showTooltip) {
+		if (!hold.showTooltip && this.isDesktop) {
 			hold.tooltip.style.opacity = 0
 			return
 		}
@@ -223,10 +226,13 @@ export default class App {
 
 		const { tooltip } = hold
 		const { x, y } = hold.cursorPosition
-		const { width } = tooltip.getBoundingClientRect()
-		tooltip.style.top = `${y + 33}px`
-		tooltip.style.left = `${x - width / 2}px`
-		tooltip.style.opacity = 1
+		const { width } = this.isDesktop ? tooltip.getBoundingClientRect() : 0
+
+		if(this.isDesktop) {
+			tooltip.style.top = `${y + 33}px`
+			tooltip.style.left = `${x - width / 2}px`
+			tooltip.style.opacity = 1
+		}
 	}
 
 	onTouchUp(event) {}
@@ -267,13 +273,16 @@ export default class App {
 					}
 					current += 10
 				}, 100)
-				tooltip.style.opacity = 0
+				this.isDesktop ? tooltip.style.opacity = 0 : null
 			},
 			onRelease: () => {
 				let { interval, current, tooltip } = this.clickHold
 				if (interval) clearInterval(interval)
 				current = 0
-				tooltip.style.opacity = 1
+
+				if(this.isDesktop) {
+					tooltip.style.opacity = 1
+				}
 			},
 			onDown: () => {
 				console.log('down')
