@@ -4,10 +4,10 @@ import { Observer } from 'gsap/Observer'
 import { deg2rad, vhCalc, hypothenuse, containsClass, loadImage } from './utils'
 
 const gui = new dat.GUI({ closeOnTop: false })
+gsap.registerPlugin(Observer)
 
 window.onload = () => {
-	const app = new App()
-	app.init()
+	new App().init()
 }
 export default class App {
 	constructor() {
@@ -25,7 +25,7 @@ export default class App {
 			titleTarget: document.querySelector('.kitten__titles'),
 			activeSlide: null,
 		}
-		this.clickHold = {
+		this.hold = {
 			tooltip: null,
 			interval: null,
 			showTooltip: false,
@@ -33,8 +33,6 @@ export default class App {
 			current: 0,
 			cursorPosition: { x: 0, y: 0 },
 		}
-		gsap.registerPlugin(Observer)
-		console.log(this.currentTitle)
 	}
 
 	async init() {
@@ -86,7 +84,7 @@ export default class App {
 
 	createTooltip() {
 		const { planes } = this.nodes
-		const { clickHold: hold } = this
+		const { hold } = this
 		hold.tooltip = document.createElement('b')
 		hold.tooltip.classList.add('kitten__tooltip')
 		hold.tooltip.innerText = "Click'n Hold"
@@ -209,7 +207,7 @@ export default class App {
 	onTouchDown(event) {}
 
 	onTouchMove(event) {
-		const { clickHold: hold } = this
+		const { hold } = this
 
 		if (!hold.showTooltip) {
 			hold.tooltip.style.opacity = 0
@@ -240,8 +238,10 @@ export default class App {
 	onResize() {
 		this.offsetX = 0
 		this.planeWidths = this.getPlaneWidths()
-		this.edges = this.planeWidths.reduce((prev, curr, _, acc) => [...acc, prev + curr], [])
 		this.setTransform()
+
+		let sum = 0
+		this.edges = this.planeWidths.map(value => (sum += value))
 	}
 
 	/**
@@ -257,7 +257,7 @@ export default class App {
 			wheelSpeed: -1,
 			onHover: event => {},
 			onPress: () => {
-				let { interval, current, tooltip } = this.clickHold
+				let { interval, current, tooltip } = this.hold
 				if (interval) clearInterval(interval)
 				interval = setInterval(() => {
 					if (current >= 150) {
@@ -270,22 +270,22 @@ export default class App {
 				tooltip.style.opacity = 0
 			},
 			onRelease: () => {
-				let { interval, current, tooltip } = this.clickHold
+				let { interval, current, tooltip } = this.hold
 				if (interval) clearInterval(interval)
 				current = 0
 				tooltip.style.opacity = 1
 			},
 			onDown: () => {
-				console.log('down')
+				// console.log('down')
 			},
 			onUp: () => {
-				console.log('up')
+				// console.log('up')
 			},
 			onLeft: () => {
-				console.log('left')
+				// console.log('left')
 			},
 			onRight: () => {
-				console.log('right')
+				// console.log('right')
 			},
 			tolerance: 10,
 			preventDefault: false,
