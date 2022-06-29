@@ -1,6 +1,6 @@
 import * as dat from 'dat.gui'
 import { gsap } from 'gsap'
-import { Observer } from 'gsap/Observer'
+import { Observer } from 'gsap/all'
 import { getDeviceType, deg2rad, vhCalc, hypothenuse, containsClass, loadImage } from './utils'
 gsap.registerPlugin(Observer)
 
@@ -90,7 +90,7 @@ export default class App {
 		const { hold } = this
 		hold.tooltip = document.createElement('b')
 		hold.tooltip.classList.add('kitten__tooltip')
-		hold.tooltip.innerText = "Click'n Hold"
+		hold.tooltip.innerText = 'Click & Hold'
 		if (this.isDesktop) root.appendChild(hold.tooltip)
 
 		planes.forEach((el, i) => {
@@ -265,12 +265,12 @@ export default class App {
 			wheelSpeed: -1,
 			onHover: event => {},
 			onPress: () => {
-				let { interval, current, tooltip } = this.hold
-				if (interval) clearInterval(interval)
-				interval = setInterval(() => {
+				let { current, tooltip } = this.hold
+				if (this.interval) clearInterval(this.interval)
+				this.interval = setInterval(() => {
 					if (current >= 150) {
 						console.log('open project detail page')
-						clearInterval(interval)
+						clearInterval(this.interval)
 						return
 					}
 					current += 10
@@ -278,9 +278,9 @@ export default class App {
 				this.isDesktop ? (tooltip.style.opacity = 0) : null
 			},
 			onRelease: () => {
-				let { interval, current, tooltip } = this.hold
-				if (interval) clearInterval(interval)
-				current = 0
+				let { tooltip } = this.hold
+				if (this.interval) clearInterval(this.interval)
+				this.current = 0
 
 				if (this.isDesktop) {
 					tooltip.style.opacity = 1

@@ -62,14 +62,15 @@ body {
 	}
 
 	&__tooltip {
+		position: fixed;
+		mix-blend-mode: difference;
+		z-index: 3;
 		font-family: Arial, sans-serif;
 		font-weight: lighter;
 		text-transform: uppercase;
 		letter-spacing: 2px;
 		font-size: 11px;
-		mix-blend-mode: difference;
-		position: fixed;
-		z-index: 3;
+		white-space: nowrap;
 		opacity: 1;
 		transition: opacity 0.3s linear;
 	}
