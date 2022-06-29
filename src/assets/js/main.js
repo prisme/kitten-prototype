@@ -39,6 +39,7 @@ export default class App {
 
 	async init() {
 		this.imageSizes = await this.getImageSizes()
+		this.nodes.world.classList.add('loaded')
 		vhCalc()
 		this.onResize()
 		this.addEventListeners()
