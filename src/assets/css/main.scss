@@ -21,6 +21,7 @@ body {
 		position: absolute;
 		inset: 0;
 		overflow-x: scroll;
+		overflow-y: hidden;
 		perspective: 800px;
 
 		.plane {
