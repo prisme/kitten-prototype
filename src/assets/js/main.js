@@ -19,12 +19,12 @@ export default class App {
 			current: 0,
 			cursorPosition: { x: 0, y: 0 },
 		}
-
+		this.titleHolder = false
 		this.depth = 555
 		this.offsetX = 0
 		this.planeWidths = []
 		this.imageSizes = []
-		this.edges = []
+		this.world = document.querySelector(".world")
 		this.planes = [...document.querySelectorAll(".plane")]
 		gsap.registerPlugin(Observer)
 	}
@@ -32,11 +32,12 @@ export default class App {
 	async init() {
 		vhCalc()
 		this.imageSizes = await this.getImageSizes()
-		this.onResize()
 		this.createTooltip()
 		this.addEventListeners()
+		
+		this.onResize()
 
-		document.querySelector(".world").scrollLeft = 0
+		this.world.scrollLeft = 0
 
 		gui
 			.add(this, "depth", 0, window.innerHeight)
@@ -73,11 +74,6 @@ export default class App {
 		})
 	}
 
-	getEdges() {
-		let sum = 0
-		this.edges = this.planeWidths.map((value) => (sum += value))
-	}
-
 	createTooltip() {
 		const { clickHold } = this
 		clickHold.tooltip = document.createElement("b")
@@ -108,16 +104,12 @@ export default class App {
 	}
 
 	handleTitles() {
-		const pHolder = document.querySelector(".kitten__titles")
-		const title = this.activeSlide.getElementsByClassName(
-			"kitten__dummyTitles"
-		)[0].textContent
+		this.titleHolder = document.querySelector(".kitten__titles")
+		this.title = this.activeSlide.getElementsByClassName("kitten__dummytitles")[0].textContent
 
-		document.querySelector(".world").addEventListener("scroll", () => {
-			pHolder.textContent = title
-		})
-
-		console.log("init titles", title)
+		if(this.titleHolder.textContent === '') {
+			this.titleHolder.textContent = this.title
+		}
 	}
 
 	setTransform() {
@@ -239,8 +231,9 @@ export default class App {
 	onResize() {
 		this.offsetX = 0
 		this.planeWidths = this.getPlaneWidths()
-		this.edges = this.planeWidths.reduce((prev, curr) => prev + curr, 0)
 		this.setTransform()
+
+		console.log(this.planes[2])
 	}
 
 	/**
@@ -262,7 +255,7 @@ export default class App {
 				clickHold.interval = setInterval(() => {
 					clickHold.current += 1
 					if (clickHold.current >= 2) {
-						console.log("click hold event")
+						// console.log("click hold event")
 					}
 				}, 1000)
 			},
@@ -273,16 +266,16 @@ export default class App {
 				clickHold.tooltip.style.opacity = 1
 			},
 			onDown: () => {
-				console.log("down")
+				// console.log("down")
 			},
 			onUp: () => {
-				console.log("up")
+				// console.log("up")
 			},
 			onLeft: () => {
-				console.log("left")
+				// console.log("left")
 			},
 			onRight: () => {
-				console.log("right")
+				// console.log("right")fconso
 			},
 			tolerance: 10,
 			preventDefault: false,
@@ -296,6 +289,10 @@ export default class App {
 		for (let plane of this.planes) {
 			this.observer.observe(plane)
 		}
+
+		this.world.addEventListener("scroll", (ev) => {
+			this.titleHolder ? this.titleHolder.textContent = this.title : ''
+		})
 
 		window.addEventListener("mousewheel", this.onWheel.bind(this))
 		window.addEventListener("wheel", this.onWheel.bind(this))
