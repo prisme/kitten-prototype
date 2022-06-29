@@ -73,6 +73,7 @@ body {
 		white-space: nowrap;
 		opacity: 1;
 		transition: opacity 0.3s linear;
+		white-space: nowrap;
 	}
 
 	&__overlay {
@@ -100,20 +101,54 @@ body {
 			position: relative;
 			font-size: 56px;
 			margin: 20px;
+			z-index: 1;
 		}
 
 		&_navigation {
 			cursor: pointer;
 			margin: 20px;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+
+			&.active {
+				.kitten__menu_navigation-nav {
+					width: initial;
+					height: initial;
+					visibility: visible;
+					opacity: 1;
+					transition: opacity 0.3s linear, visibility 0.3s linear;
+				}
+			}
 
 			&-icon {
+				z-index: 10;
 				font-size: 30px;
 			}
 
-			nav {
-				position: absolute;
-				right: -100%;
+			&-element {
+				color: var(--white);
+				font-size: 24px;
+			}
+
+			&-nav {
+				text-transform: uppercase;
+				padding-right: 20px;
 				visibility: hidden;
+				opacity: 0;
+				width: 0px;
+				height: 0px;
+
+				ol {
+					display: flex;
+					flex-direction: row;
+
+					li {
+						padding: 0 20px;
+						height: 24px;
+						line-height: 1;
+					}
+				}
 			}
 		}
 	}
@@ -132,5 +167,39 @@ body {
 @media (max-width: 600px) {
 	.kitten__overlay {
 		box-shadow: inset -240px 0 200px -210px #fff;
+	}
+
+	.kitten__menu_navigation {
+		&-element {
+			color: var(--black);
+		}
+
+		&.active {
+			.kitten__menu_navigation-icon {
+				color: var(--black);
+			}
+		}
+
+		&-nav {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100vw !important;
+			height: 100vh !important;
+			background: white;
+			padding-right: 0;
+			padding-top: 100px;
+			text-align: right;
+			box-shadow: inset 50px 0px 100px -38px #000000;
+
+			ol {
+				flex-direction: column;
+
+				li {
+					height: auto;
+					padding: 20px;
+				}
+			}
+		}
 	}
 }

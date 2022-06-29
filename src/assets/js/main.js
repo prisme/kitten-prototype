@@ -316,6 +316,14 @@ export default class App {
 			titleTarget.textContent = titleTarget ? this.currentTitle : ''
 		})
 
+		document.querySelector('.kitten__menu_navigation-icon').addEventListener('click', (ev) => {
+			const nav = document.querySelector('.kitten__menu_navigation')
+
+			console.log('!')
+			ev.preventDefault()
+			nav.classList.contains('active') ? nav.classList.remove('active') : nav.classList.add('active')
+		})	
+
 		window.addEventListener('mousewheel', this.onWheel.bind(this))
 		window.addEventListener('wheel', this.onWheel.bind(this))
 
