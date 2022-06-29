@@ -17,7 +17,7 @@ export default class App {
 		this.planeWidths = []
 		this.imageSizes = []
 		this.edges = []
-		this.currentTitle = document.querySelector('.kitten__dummyTitles').textContent
+		this.currentTitle = document.querySelector('.kitten__dummytitles').textContent
 		this.nodes = {
 			root: document.querySelector('.kitten'),
 			planes: [...document.querySelectorAll('.plane')],
@@ -115,7 +115,7 @@ export default class App {
 
 	handleTitles() {
 		const { activeSlide } = this.nodes
-		this.currentTitle = activeSlide.querySelector('.kitten__dummyTitles').textContent
+		this.currentTitle = activeSlide.querySelector('.kitten__dummytitles').textContent
 	}
 
 	setTransform() {
