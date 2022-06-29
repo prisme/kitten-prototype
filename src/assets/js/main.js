@@ -118,7 +118,9 @@ export default class App {
 
 	handleTitles() {
 		const { activeSlide } = this.nodes
-		this.currentTitle = activeSlide.querySelector('.kitten__dummytitles').textContent
+		if(activeSlide) {
+			this.currentTitle = activeSlide.querySelector('.kitten__dummytitles').textContent
+		}
 	}
 
 	setTransform() {
