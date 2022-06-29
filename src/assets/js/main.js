@@ -1,18 +1,16 @@
 import * as dat from 'dat.gui'
 import { gsap } from 'gsap'
-import { Observer } from 'gsap/all'
-import { getDeviceType, deg2rad, vhCalc, hypothenuse, containsClass, loadImage } from './utils'
-gsap.registerPlugin(Observer)
+import { Observer } from 'gsap/Observer'
+import { deg2rad, vhCalc, hypothenuse, containsClass, loadImage, deviceType } from './utils'
 
-const gui = new dat.GUI({ closeOnTop: false })
 gsap.registerPlugin(Observer)
+const gui = new dat.GUI({ closeOnTop: false })
 
 window.onload = () => {
 	new App().init()
 }
 export default class App {
 	constructor() {
-		this.isDesktop = getDeviceType() === 'desktop'
 		this.intersection = null
 		this.depth = 555
 		this.offsetX = 0
@@ -86,12 +84,13 @@ export default class App {
 	}
 
 	createTooltip() {
+		if (deviceType.isTouch) return
 		const { planes, root } = this.nodes
 		const { hold } = this
 		hold.tooltip = document.createElement('b')
 		hold.tooltip.classList.add('kitten__tooltip')
 		hold.tooltip.innerText = 'Click & Hold'
-		if (this.isDesktop) root.appendChild(hold.tooltip)
+		root.appendChild(hold.tooltip)
 
 		planes.forEach((el, i) => {
 			el.addEventListener('mouseenter', () => {
@@ -160,18 +159,14 @@ export default class App {
 	setLeft(el, width) {
 		const angle = deg2rad(90) - Math.acos(this.depth / width)
 		const offset = hypothenuse(width, this.depth)
-
 		el.style.transform = `translateX(${this.offsetX}px) rotateY(${angle}rad)`
-
 		this.offsetX += offset
 	}
 
 	setRight(el, width) {
 		const angle = deg2rad(90) - Math.acos(this.depth / width)
 		const offset = hypothenuse(width, this.depth)
-
 		el.style.transform = `translateX(${this.offsetX}px) translateZ(-${this.depth}px) rotateY(-${angle}rad)`
-
 		this.offsetX += offset
 	}
 
@@ -209,12 +204,11 @@ export default class App {
 		this.handleTitles()
 	}
 
-	onTouchDown(event) {}
-
 	onTouchMove(event) {
+		if (deviceType.isTouch) return
 		const { hold } = this
 
-		if (!hold.showTooltip && this.isDesktop) {
+		if (!hold.showTooltip) {
 			hold.tooltip.style.opacity = 0
 			return
 		}
@@ -226,18 +220,12 @@ export default class App {
 
 		const { tooltip } = hold
 		const { x, y } = hold.cursorPosition
-		const { width } = this.isDesktop ? tooltip.getBoundingClientRect() : 0
+		const { width } = tooltip.getBoundingClientRect()
 
-		if (this.isDesktop) {
-			tooltip.style.top = `${y + 33}px`
-			tooltip.style.left = `${x - width / 2}px`
-			tooltip.style.opacity = 1
-		}
+		tooltip.style.top = `${y + 33}px`
+		tooltip.style.left = `${x - width / 2}px`
+		tooltip.style.opacity = 1
 	}
-
-	onTouchUp(event) {}
-
-	onWheel(event) {}
 
 	/**
 	 * Resize.
@@ -248,8 +236,8 @@ export default class App {
 		this.planeWidths = this.getPlaneWidths()
 		this.setTransform()
 
-		let sum = 0
-		this.edges = this.planeWidths.map(value => (sum += value))
+		// let sum = 0
+		// this.edges = this.planeWidths.map(value => (sum += value))
 	}
 
 	/**
@@ -260,43 +248,50 @@ export default class App {
 		window.addEventListener('resize', this.onResize.bind(this))
 		window.addEventListener('orientationchange', this.onResize.bind(this))
 
+		window.addEventListener('touchmove', this.onTouchMove.bind(this))
+		window.addEventListener('mousemove', this.onTouchMove.bind(this))
+
 		Observer.create({
+			target: this.nodes.world,
 			type: 'wheel,touch,pointer',
 			wheelSpeed: -1,
-			onHover: event => {},
 			onPress: () => {
-				let { current, tooltip } = this.hold
-				if (this.interval) clearInterval(this.interval)
-				this.interval = setInterval(() => {
-					if (current >= 150) {
-						console.log('open project detail page')
-						clearInterval(this.interval)
+				if (deviceType.isTouch) return
+				if (this.hold.interval) clearInterval(this.hold.interval)
+				this.hold.tooltip.showTooltip = false
+
+				this.hold.interval = setInterval(() => {
+					if (this.hold.current >= 150) {
+						alert('open project detail page')
+						clearInterval(this.hold.interval)
 						return
 					}
-					current += 10
+					this.hold.current += 10
 				}, 100)
-				this.isDesktop ? (tooltip.style.opacity = 0) : null
 			},
 			onRelease: () => {
-				let { tooltip } = this.hold
-				if (this.interval) clearInterval(this.interval)
-				this.current = 0
+				if (deviceType.isTouch) return
+				if (this.hold.interval) clearInterval(this.hold.interval)
+				this.hold.tooltip.showTooltip = true
+				this.hold.current = 0
+			},
+			onChangeX: self => {
+				const { titleTarget } = this.nodes
+				titleTarget.textContent = titleTarget ? this.currentTitle : ''
 
-				if (this.isDesktop) {
-					tooltip.style.opacity = 1
-				}
+				if (!self.isDragging) return
+				self.target.scrollLeft -= self.deltaX
 			},
-			onDown: () => {
-				// console.log('down')
+			onChangeY: self => {
+				if (self.isDragging) return
+				self.target.scrollLeft -= self.deltaY
+
+				const { titleTarget } = this.nodes
+				titleTarget.textContent = titleTarget ? this.currentTitle : ''
 			},
-			onUp: () => {
-				// console.log('up')
-			},
-			onLeft: () => {
-				// console.log('left')
-			},
-			onRight: () => {
-				// console.log('right')
+			onDrag: self => {
+				if (this.hold.interval) clearInterval(this.hold.interval)
+				this.hold.showTooltip = false
 			},
 			tolerance: 10,
 			preventDefault: false,
@@ -310,21 +305,5 @@ export default class App {
 		for (let plane of this.nodes.planes) {
 			this.intersection.observe(plane)
 		}
-
-		this.nodes.world.addEventListener('scroll', () => {
-			const { titleTarget } = this.nodes
-			titleTarget.textContent = titleTarget ? this.currentTitle : ''
-		})
-
-		window.addEventListener('mousewheel', this.onWheel.bind(this))
-		window.addEventListener('wheel', this.onWheel.bind(this))
-
-		window.addEventListener('touchmove', this.onTouchMove.bind(this))
-		window.addEventListener('mousemove', this.onTouchMove.bind(this))
-
-		// window.addEventListener("touchstart", this.onTouchDown.bind(this))
-		// window.addEventListener("mousedown", this.onTouchDown.bind(this))
-		// window.addEventListener("mouseup", this.onTouchUp.bind(this))
-		// window.addEventListener("touchend", this.onTouchUp.bind(this))
 	}
 }

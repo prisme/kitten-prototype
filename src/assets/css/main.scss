@@ -14,7 +14,7 @@ body {
 	position: relative;
 
 	.world {
-		scroll-snap-type: x mandatory;
+		/* scroll-snap-type: x mandatory; */
 		width: 100%;
 		height: 100vh;
 		position: absolute;
@@ -22,11 +22,12 @@ body {
 		overflow-x: scroll;
 		overflow-y: hidden;
 		perspective: 800px;
+		scroll-behavior: auto;
 		&.loaded .plane img {
 			opacity: 1;
 		}
 		.plane {
-			scroll-snap-align: start;
+			/* scroll-snap-align: start; */
 			position: absolute;
 			transform-style: preserve-3d;
 			height: calc(100 * var(--vh));
