@@ -15,14 +15,14 @@ export function hypothenuse(width, depth) {
 }
 
 export function containsClass(el, className) {
-	return [`${className}`].every((c) => el.classList.contains(c))
+	return [`${className}`].every(c => el.classList.contains(c))
 }
 
 export function loadImage(url) {
 	return new Promise((resolve, reject) => {
 		const img = new Image()
-		img.addEventListener("load", () => resolve(img))
-		img.addEventListener("error", reject)
+		img.addEventListener('load', () => resolve(img))
+		img.addEventListener('error', reject)
 		img.src = url
 	})
 }
@@ -30,7 +30,7 @@ export function loadImage(url) {
 function trueVhCalc() {
 	window.requestAnimationFrame(() => {
 		const vh = window.innerHeight * 0.01
-		document.documentElement.style.setProperty("--vh", `${vh}px`)
+		document.documentElement.style.setProperty('--vh', `${vh}px`)
 	})
 }
 
@@ -47,10 +47,10 @@ function goTrueVhCalc(i, height0) {
 export function vhCalc() {
 	trueVhCalc()
 	let trueVhCalcTick
-	window.addEventListener("orientationchange", () => {
+	window.addEventListener('orientationchange', () => {
 		goTrueVhCalc(0, window.innerHeight)
 	})
-	window.addEventListener("resize", () => {
+	window.addEventListener('resize', () => {
 		window.cancelAnimationFrame(trueVhCalcTick)
 		trueVhCalcTick = window.requestAnimationFrame(trueVhCalc)
 	})
