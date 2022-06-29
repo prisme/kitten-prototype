@@ -1,7 +1,7 @@
-import * as dat from "dat.gui"
-import { gsap } from "gsap"
-import { Observer } from "gsap/Observer"
-import { deg2rad, vhCalc, hypothenuse, containsClass, loadImage } from "./utils"
+import * as dat from 'dat.gui'
+import { gsap } from 'gsap'
+import { Observer } from 'gsap/Observer'
+import { deg2rad, vhCalc, hypothenuse, containsClass, loadImage } from './utils'
 
 const gui = new dat.GUI({ closeOnTop: false })
 
@@ -11,6 +11,20 @@ window.onload = () => {
 }
 export default class App {
 	constructor() {
+		this.intersection = null
+		this.depth = 555
+		this.offsetX = 0
+		this.planeWidths = []
+		this.imageSizes = []
+		this.edges = []
+		this.currentTitle = document.querySelector('.kitten__dummyTitles').textContent
+		this.nodes = {
+			root: document.querySelector('.kitten'),
+			planes: [...document.querySelectorAll('.plane')],
+			world: document.querySelector('.world'),
+			titleTarget: document.querySelector('.kitten__titles'),
+			activeSlide: null,
+		}
 		this.clickHold = {
 			tooltip: null,
 			interval: null,
@@ -19,51 +33,48 @@ export default class App {
 			current: 0,
 			cursorPosition: { x: 0, y: 0 },
 		}
-
-		this.depth = 555
-		this.offsetX = 0
-		this.planeWidths = []
-		this.imageSizes = []
-		this.edges = []
-		this.planes = [...document.querySelectorAll(".plane")]
 		gsap.registerPlugin(Observer)
+		console.log(this.currentTitle)
 	}
 
 	async init() {
-		vhCalc()
 		this.imageSizes = await this.getImageSizes()
+		vhCalc()
 		this.onResize()
-		this.createTooltip()
 		this.addEventListeners()
+		this.createTooltip()
 
-		document.querySelector(".world").scrollLeft = 0
+		const { titleTarget, world } = this.nodes
+		titleTarget.textContent = titleTarget ? this.currentTitle : ''
+		world.scrollLeft = 0
 
 		gui
-			.add(this, "depth", 0, window.innerHeight)
+			.add(this, 'depth', 0, window.innerHeight)
 			.step(1)
-			.onChange((val) => {
+			.onChange(val => {
 				this.depth = val
 				this.onResize()
 			})
 	}
 
 	async getImageSizes() {
-		return new Promise((resolve) => {
+		const { planes } = this.nodes
+		return new Promise(resolve => {
 			let promises = []
 			let sizes = []
 
-			for (let i = 0; i < this.planes.length; i++) {
-				const src = this.planes[i].querySelector("img").src
+			for (let i = 0; i < planes.length; i++) {
+				const src = planes[i].querySelector('img').src
 
 				promises.push(
 					loadImage(src)
-						.then((img) => {
+						.then(img => {
 							sizes[i] = {
 								width: img.naturalWidth,
 								height: img.naturalHeight,
 							}
 						})
-						.catch((err) => console.error(err))
+						.catch(err => console.error(err)),
 				)
 			}
 
@@ -73,56 +84,43 @@ export default class App {
 		})
 	}
 
-	getEdges() {
-		let sum = 0
-		this.edges = this.planeWidths.map((value) => (sum += value))
-	}
-
 	createTooltip() {
-		const { clickHold } = this
-		clickHold.tooltip = document.createElement("b")
-		clickHold.tooltip.classList.add("kitten__tooltip")
-		clickHold.tooltip.innerText = "Click'n Hold"
-		document.querySelector(".kitten").appendChild(clickHold.tooltip)
+		const { planes } = this.nodes
+		const { clickHold: hold } = this
+		hold.tooltip = document.createElement('b')
+		hold.tooltip.classList.add('kitten__tooltip')
+		hold.tooltip.innerText = "Click'n Hold"
+		document.querySelector('.kitten').appendChild(hold.tooltip)
 
-		this.planes.forEach((el, i) => {
-			el.addEventListener("mouseenter", () => {
-				clickHold.showTooltip = true
+		planes.forEach((el, i) => {
+			el.addEventListener('mouseenter', () => {
+				hold.showTooltip = true
 			})
-			el.addEventListener("mouseleave", () => {
-				clickHold.showTooltip = false
+			el.addEventListener('mouseleave', () => {
+				hold.showTooltip = false
 			})
 		})
 	}
 
 	getPlaneWidths() {
+		const { planes } = this.nodes
 		const { innerHeight } = window
 
-		return this.planes.reduce((planeWidths, _, index) => {
+		return planes.reduce((planeWidths, _, index) => {
 			const { width, height } = this.imageSizes[index]
-
 			const ratioWidth = innerHeight * (width / height)
-			planeWidths.push(ratioWidth)
-			return planeWidths
+			return [...planeWidths, ratioWidth]
 		}, [])
 	}
 
 	handleTitles() {
-		const pHolder = document.querySelector(".kitten__titles")
-		const title = this.activeSlide.getElementsByClassName(
-			"kitten__dummyTitles"
-		)[0].textContent
-
-		document.querySelector(".world").addEventListener("scroll", () => {
-			pHolder.textContent = title
-		})
-
-		console.log("init titles", title)
+		const { activeSlide } = this.nodes
+		this.currentTitle = activeSlide.querySelector('.kitten__dummyTitles').textContent
 	}
 
 	setTransform() {
-		const { planes, planeWidths, setFront, setBack, rotateLeft, rotateRight } =
-			this
+		const { planes } = this.nodes
+		const { planeWidths, setFront, setBack, setLeft, setRight } = this
 
 		for (let i = 0; i < planes.length; i++) {
 			const plane = planes[i]
@@ -130,14 +128,14 @@ export default class App {
 
 			plane.style.width = `${width}px`
 
-			const method = containsClass(plane, "front")
+			const method = containsClass(plane, 'front')
 				? setFront.bind(this)
-				: containsClass(plane, "back")
+				: containsClass(plane, 'back')
 				? setBack.bind(this)
-				: containsClass(plane, "left")
-				? rotateLeft.bind(this)
-				: containsClass(plane, "right")
-				? rotateRight.bind(this)
+				: containsClass(plane, 'left')
+				? setLeft.bind(this)
+				: containsClass(plane, 'right')
+				? setRight.bind(this)
 				: () => {
 						console.error(`missing class on element: ${plane}`)
 				  }
@@ -156,7 +154,7 @@ export default class App {
 		this.offsetX += width
 	}
 
-	rotateLeft(el, width) {
+	setLeft(el, width) {
 		const angle = deg2rad(90) - Math.acos(this.depth / width)
 		const offset = hypothenuse(width, this.depth)
 
@@ -165,7 +163,7 @@ export default class App {
 		this.offsetX += offset
 	}
 
-	rotateRight(el, width) {
+	setRight(el, width) {
 		const angle = deg2rad(90) - Math.acos(this.depth / width)
 		const offset = hypothenuse(width, this.depth)
 
@@ -179,17 +177,19 @@ export default class App {
 	 */
 
 	onIntersection(entries) {
+		const { planes } = this.nodes
+
 		entries.forEach((el, i) => {
 			if (el.isIntersecting) {
-				el.target.classList.add("active")
+				el.target.classList.add('active')
 			} else {
-				el.target.classList.remove("active")
+				el.target.classList.remove('active')
 			}
 		})
 
 		let visibleSlides = []
-		this.planes.forEach((el, i) => {
-			if (el.classList.contains("active")) {
+		planes.forEach(el => {
+			if (el.classList.contains('active')) {
 				visibleSlides.push(el)
 			}
 		})
@@ -201,7 +201,7 @@ export default class App {
 
 		const min = Math.min(...visibleSlidesX)
 		const index = visibleSlidesX.indexOf(min)
-		this.activeSlide = visibleSlides[index]
+		this.nodes.activeSlide = visibleSlides[index]
 
 		this.handleTitles()
 	}
@@ -209,23 +209,24 @@ export default class App {
 	onTouchDown(event) {}
 
 	onTouchMove(event) {
-		const { clickHold } = this
+		const { clickHold: hold } = this
 
-		clickHold.cursorPosition = {
+		if (!hold.showTooltip) {
+			hold.tooltip.style.opacity = 0
+			return
+		}
+
+		hold.cursorPosition = {
 			x: event.clientX,
 			y: event.clientY,
 		}
 
-		if (clickHold.showTooltip) {
-			clickHold.tooltip.style.top = `${clickHold.cursorPosition.y + 33}px`
-			clickHold.tooltip.style.left = `${
-				clickHold.cursorPosition.x -
-				clickHold.tooltip.getBoundingClientRect().width / 2
-			}px`
-			clickHold.tooltip.style.opacity = 1
-		} else {
-			clickHold.tooltip.style.opacity = 0
-		}
+		const { tooltip } = hold
+		const { x, y } = hold.cursorPosition
+		const { width } = tooltip.getBoundingClientRect()
+		tooltip.style.top = `${y + 33}px`
+		tooltip.style.left = `${x - width / 2}px`
+		tooltip.style.opacity = 1
 	}
 
 	onTouchUp(event) {}
@@ -239,7 +240,7 @@ export default class App {
 	onResize() {
 		this.offsetX = 0
 		this.planeWidths = this.getPlaneWidths()
-		this.edges = this.planeWidths.reduce((prev, curr) => prev + curr, 0)
+		this.edges = this.planeWidths.reduce((prev, curr, _, acc) => [...acc, prev + curr], [])
 		this.setTransform()
 	}
 
@@ -248,60 +249,67 @@ export default class App {
 	 */
 
 	addEventListeners() {
-		window.addEventListener("resize", this.onResize.bind(this))
-		window.addEventListener("orientationchange", this.onResize.bind(this))
+		window.addEventListener('resize', this.onResize.bind(this))
+		window.addEventListener('orientationchange', this.onResize.bind(this))
 
 		Observer.create({
-			type: "wheel,touch,pointer",
+			type: 'wheel,touch,pointer',
 			wheelSpeed: -1,
-			onHover: (event) => {},
-			onPress: (event) => {
-				const { clickHold } = this
-				if (clickHold.interval) clearInterval(clickHold.interval)
-				clickHold.tooltip.style.opacity = 0
-				clickHold.interval = setInterval(() => {
-					clickHold.current += 1
-					if (clickHold.current >= 2) {
-						console.log("click hold event")
+			onHover: event => {},
+			onPress: () => {
+				let { interval, current, tooltip } = this.clickHold
+				if (interval) clearInterval(interval)
+				interval = setInterval(() => {
+					if (current >= 150) {
+						console.log('open project detail page')
+						clearInterval(interval)
+						return
 					}
-				}, 1000)
+					current += 10
+				}, 100)
+				tooltip.style.opacity = 0
 			},
-			onRelease: (event) => {
-				const { clickHold } = this
-				if (clickHold.interval) clearInterval(clickHold.interval)
-				clickHold.current = 0
-				clickHold.tooltip.style.opacity = 1
+			onRelease: () => {
+				let { interval, current, tooltip } = this.clickHold
+				if (interval) clearInterval(interval)
+				current = 0
+				tooltip.style.opacity = 1
 			},
 			onDown: () => {
-				console.log("down")
+				console.log('down')
 			},
 			onUp: () => {
-				console.log("up")
+				console.log('up')
 			},
 			onLeft: () => {
-				console.log("left")
+				console.log('left')
 			},
 			onRight: () => {
-				console.log("right")
+				console.log('right')
 			},
 			tolerance: 10,
 			preventDefault: false,
 		})
 
-		this.observer = new IntersectionObserver(this.onIntersection.bind(this), {
+		this.intersection = new IntersectionObserver(this.onIntersection.bind(this), {
 			root: null,
-			rootMargin: "0px",
+			rootMargin: '0px',
 			threshold: 0.5,
 		})
-		for (let plane of this.planes) {
-			this.observer.observe(plane)
+		for (let plane of this.nodes.planes) {
+			this.intersection.observe(plane)
 		}
 
-		window.addEventListener("mousewheel", this.onWheel.bind(this))
-		window.addEventListener("wheel", this.onWheel.bind(this))
+		this.nodes.world.addEventListener('scroll', () => {
+			const { titleTarget } = this.nodes
+			titleTarget.textContent = titleTarget ? this.currentTitle : ''
+		})
 
-		window.addEventListener("touchmove", this.onTouchMove.bind(this))
-		window.addEventListener("mousemove", this.onTouchMove.bind(this))
+		window.addEventListener('mousewheel', this.onWheel.bind(this))
+		window.addEventListener('wheel', this.onWheel.bind(this))
+
+		window.addEventListener('touchmove', this.onTouchMove.bind(this))
+		window.addEventListener('mousemove', this.onTouchMove.bind(this))
 
 		// window.addEventListener("touchstart", this.onTouchDown.bind(this))
 		// window.addEventListener("mousedown", this.onTouchDown.bind(this))

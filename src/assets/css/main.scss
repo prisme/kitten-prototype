@@ -15,10 +15,37 @@ body {
 
 	.world {
 		scroll-snap-type: x mandatory;
+		width: 100%;
+		height: 100vh;
+		position: absolute;
+		inset: 0;
+		overflow-x: scroll;
+		perspective: 800px;
 
 		.plane {
 			scroll-snap-align: start;
+			position: absolute;
+			transform-style: preserve-3d;
+			height: calc(100 * var(--vh));
+
+			img {
+				height: 100%;
+			}
+
+			&.left,
+			&.right {
+				transform-origin: left bottom;
+			}
 		}
+
+		.scene {
+			position: absolute;
+			transform-style: preserve-3d;
+		}
+	}
+
+	&__dummytitles {
+		visibility: hidden;
 	}
 
 	&__titles {
