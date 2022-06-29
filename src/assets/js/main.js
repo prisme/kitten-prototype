@@ -1,14 +1,14 @@
 import * as dat from 'dat.gui'
 import { gsap } from 'gsap'
-import { Observer } from 'gsap/Observer'
+import { Observer } from 'gsap/all'
 import { getDeviceType, deg2rad, vhCalc, hypothenuse, containsClass, loadImage } from './utils'
 gsap.registerPlugin(Observer)
 
 const gui = new dat.GUI({ closeOnTop: false })
+gsap.registerPlugin(Observer)
 
 window.onload = () => {
-	const app = new App()
-	app.init()
+	new App().init()
 }
 export default class App {
 	constructor() {
@@ -27,7 +27,7 @@ export default class App {
 			titleTarget: document.querySelector('.kitten__titles'),
 			activeSlide: null,
 		}
-		this.clickHold = {
+		this.hold = {
 			tooltip: null,
 			interval: null,
 			showTooltip: false,
@@ -39,6 +39,7 @@ export default class App {
 
 	async init() {
 		this.imageSizes = await this.getImageSizes()
+		this.nodes.world.classList.add('loaded')
 		vhCalc()
 		this.onResize()
 		this.addEventListeners()
@@ -85,15 +86,12 @@ export default class App {
 	}
 
 	createTooltip() {
-		const { planes } = this.nodes
-		const { clickHold: hold } = this
-
-		if(this.isDesktop) {
-			hold.tooltip = document.createElement('b')
-			hold.tooltip.classList.add('kitten__tooltip')
-			hold.tooltip.innerText = "Click'n Hold"
-			document.querySelector('.kitten').appendChild(hold.tooltip)
-		}
+		const { planes, root } = this.nodes
+		const { hold } = this
+		hold.tooltip = document.createElement('b')
+		hold.tooltip.classList.add('kitten__tooltip')
+		hold.tooltip.innerText = 'Click & Hold'
+		if (this.isDesktop) root.appendChild(hold.tooltip)
 
 		planes.forEach((el, i) => {
 			el.addEventListener('mouseenter', () => {
@@ -118,7 +116,7 @@ export default class App {
 
 	handleTitles() {
 		const { activeSlide } = this.nodes
-		if(activeSlide) {
+		if (activeSlide) {
 			this.currentTitle = activeSlide.querySelector('.kitten__dummytitles').textContent
 		}
 	}
@@ -214,7 +212,7 @@ export default class App {
 	onTouchDown(event) {}
 
 	onTouchMove(event) {
-		const { clickHold: hold } = this
+		const { hold } = this
 
 		if (!hold.showTooltip && this.isDesktop) {
 			hold.tooltip.style.opacity = 0
@@ -230,7 +228,7 @@ export default class App {
 		const { x, y } = hold.cursorPosition
 		const { width } = this.isDesktop ? tooltip.getBoundingClientRect() : 0
 
-		if(this.isDesktop) {
+		if (this.isDesktop) {
 			tooltip.style.top = `${y + 33}px`
 			tooltip.style.left = `${x - width / 2}px`
 			tooltip.style.opacity = 1
@@ -248,8 +246,10 @@ export default class App {
 	onResize() {
 		this.offsetX = 0
 		this.planeWidths = this.getPlaneWidths()
-		this.edges = this.planeWidths.reduce((prev, curr, _, acc) => [...acc, prev + curr], [])
 		this.setTransform()
+
+		let sum = 0
+		this.edges = this.planeWidths.map(value => (sum += value))
 	}
 
 	/**
@@ -265,38 +265,38 @@ export default class App {
 			wheelSpeed: -1,
 			onHover: event => {},
 			onPress: () => {
-				let { interval, current, tooltip } = this.clickHold
-				if (interval) clearInterval(interval)
-				interval = setInterval(() => {
+				let { current, tooltip } = this.hold
+				if (this.interval) clearInterval(this.interval)
+				this.interval = setInterval(() => {
 					if (current >= 150) {
 						console.log('open project detail page')
-						clearInterval(interval)
+						clearInterval(this.interval)
 						return
 					}
 					current += 10
 				}, 100)
-				this.isDesktop ? tooltip.style.opacity = 0 : null
+				this.isDesktop ? (tooltip.style.opacity = 0) : null
 			},
 			onRelease: () => {
-				let { interval, current, tooltip } = this.clickHold
-				if (interval) clearInterval(interval)
-				current = 0
+				let { tooltip } = this.hold
+				if (this.interval) clearInterval(this.interval)
+				this.current = 0
 
-				if(this.isDesktop) {
+				if (this.isDesktop) {
 					tooltip.style.opacity = 1
 				}
 			},
 			onDown: () => {
-				console.log('down')
+				// console.log('down')
 			},
 			onUp: () => {
-				console.log('up')
+				// console.log('up')
 			},
 			onLeft: () => {
-				console.log('left')
+				// console.log('left')
 			},
 			onRight: () => {
-				console.log('right')
+				// console.log('right')
 			},
 			tolerance: 10,
 			preventDefault: false,
