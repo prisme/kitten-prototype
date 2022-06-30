@@ -91,15 +91,6 @@ export default class App {
 		hold.tooltip.classList.add('kitten__tooltip')
 		hold.tooltip.innerText = 'Click & Hold'
 		root.appendChild(hold.tooltip)
-
-		planes.forEach((el, i) => {
-			el.addEventListener('mouseenter', () => {
-				hold.showTooltip = true
-			})
-			el.addEventListener('mouseleave', () => {
-				hold.showTooltip = false
-			})
-		})
 	}
 
 	getPlaneWidths() {
@@ -171,7 +162,7 @@ export default class App {
 	}
 
 	/**
-	 * Events.
+	 * Event
 	 */
 
 	onIntersection(entries) {
@@ -227,10 +218,6 @@ export default class App {
 		tooltip.style.opacity = 1
 	}
 
-	/**
-	 * Resize.
-	 */
-
 	onResize() {
 		this.offsetX = 0
 		this.planeWidths = this.getPlaneWidths()
@@ -240,10 +227,6 @@ export default class App {
 		// this.edges = this.planeWidths.map(value => (sum += value))
 	}
 
-	/**
-	 * Listeners.
-	 */
-
 	addEventListeners() {
 		window.addEventListener('resize', this.onResize.bind(this))
 		window.addEventListener('orientationchange', this.onResize.bind(this))
@@ -251,30 +234,43 @@ export default class App {
 		window.addEventListener('touchmove', this.onTouchMove.bind(this))
 		window.addEventListener('mousemove', this.onTouchMove.bind(this))
 
-		Observer.create({
-			target: this.nodes.world,
-			type: 'wheel,touch,pointer',
-			wheelSpeed: -1,
-			onPress: () => {
+		this.nodes.planes.forEach(el => {
+			el.addEventListener('mouseenter', () => {
+				if (this.hold.showTooltip) return
+				this.hold.showTooltip = true
+			})
+			el.addEventListener('mouseleave', () => {
+				if (this.hold.showTooltip) this.hold.showTooltip = false
+			})
+			el.addEventListener('mousedown', () => {
 				if (deviceType.isTouch) return
 				if (this.hold.interval) clearInterval(this.hold.interval)
-				this.hold.tooltip.showTooltip = false
+				// this.hold.tooltip.showTooltip = false // implement getter/setter? https://stackoverflow.com/a/37403125
+				this.hold.tooltip.style.opacity = 0
 
 				this.hold.interval = setInterval(() => {
-					if (this.hold.current >= 150) {
+					console.log(this.hold.current)
+					if (this.hold.current >= 100) {
 						alert('open project detail page')
 						clearInterval(this.hold.interval)
 						return
 					}
 					this.hold.current += 10
 				}, 100)
-			},
-			onRelease: () => {
+			})
+			el.addEventListener('mouseup', () => {
 				if (deviceType.isTouch) return
 				if (this.hold.interval) clearInterval(this.hold.interval)
-				this.hold.tooltip.showTooltip = true
+				// this.hold.tooltip.showTooltip = true // implement getter/setter? https://stackoverflow.com/a/37403125
+				this.hold.tooltip.style.opacity = 0
 				this.hold.current = 0
-			},
+			})
+		})
+
+		Observer.create({
+			target: this.nodes.world,
+			type: 'wheel,touch,pointer',
+			wheelSpeed: -1.2,
 			onChangeX: self => {
 				const { titleTarget } = this.nodes
 				titleTarget.textContent = titleTarget ? this.currentTitle : ''
@@ -289,9 +285,13 @@ export default class App {
 				const { titleTarget } = this.nodes
 				titleTarget.textContent = titleTarget ? this.currentTitle : ''
 			},
-			onDrag: self => {
+			onDrag: () => {
 				if (this.hold.interval) clearInterval(this.hold.interval)
 				this.hold.showTooltip = false
+			},
+			onDragEnd: () => {
+				if (this.hold.interval) clearInterval(this.hold.interval)
+				this.hold.showTooltip = true
 			},
 			tolerance: 10,
 			preventDefault: false,
