@@ -305,5 +305,13 @@ export default class App {
 		for (let plane of this.nodes.planes) {
 			this.intersection.observe(plane)
 		}
+
+		document.querySelector('.kitten__menu_navigation-icon').addEventListener('click', (ev) => {
+			const nav = document.querySelector('.kitten__menu_navigation')
+
+			console.log('!')
+			ev.preventDefault()
+			nav.classList.contains('active') ? nav.classList.remove('active') : nav.classList.add('active')
+		})	
 	}
 }
