@@ -57,9 +57,13 @@ body {
 	&__titles {
 		position: fixed;
 		bottom: 0;
-		font-size: 24px;
-		padding: 20px;
+		font-size: 21px;
+		@media (min-width: 600px) {
+			font-size: clamp(24px, -42px + 3.2vh + 2.1vw, 3.5rem);
+		}
+		padding: 10px 20px;
 		text-transform: uppercase;
+		font-weight: lighter;
 	}
 
 	&__tooltip {
@@ -69,12 +73,11 @@ body {
 		font-family: Arial, sans-serif;
 		font-weight: lighter;
 		text-transform: uppercase;
-		letter-spacing: 2px;
-		font-size: 11px;
+		letter-spacing: 0.08em;
+		font-size: 9px;
 		white-space: nowrap;
 		opacity: 1;
-		transition: opacity 0.3s linear;
-		white-space: nowrap;
+		transition: opacity 0.3s ease-in-out;
 	}
 
 	&__overlay {
@@ -157,6 +160,9 @@ body {
 
 // dat-gui
 .dg.ac {
+	@media (max-width: 600px) {
+		display: none;
+	}
 	z-index: 1 !important;
 	position: fixed !important;
 	bottom: 70px !important;
