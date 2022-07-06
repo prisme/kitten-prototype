@@ -1,9 +1,11 @@
 import * as dat from 'dat.gui'
 import { gsap } from 'gsap'
 import { Observer } from 'gsap/Observer'
+import { InertiaPlugin } from 'gsap/InertiaPlugin'
 import { deg2rad, vhCalc, hypothenuse, loadImage, deviceType } from './utils'
 
 gsap.registerPlugin(Observer)
+gsap.registerPlugin(InertiaPlugin)
 const gui = new dat.GUI({ closeOnTop: false })
 
 window.onload = () => {
