@@ -10,13 +10,16 @@ gsap.registerPlugin(InertiaPlugin)
 gsap.registerPlugin(ScrollToPlugin)
 const gui = new dat.GUI({ closeOnTop: false })
 
+const DEPTH = 702
+const MAX_DEPTH = 1000
+
 window.onload = () => {
 	new App().init()
 }
 export default class App {
 	constructor() {
 		this.hasTooltip = false
-		this.depth = 702
+		this.depth = DEPTH
 		this.offsetX = 0
 		this.titleIndex = 0
 		this.planeWidths = []
@@ -48,12 +51,13 @@ export default class App {
 		this.nodes.world.scrollLeft = 0
 
 		gui
-			.add(this, 'depth', 0, window.innerHeight)
+			.add(this, 'depth', 0, MAX_DEPTH)
 			.step(1)
 			.onChange(val => {
 				this.depth = val
 				this.onResize()
 			})
+		// gui.hide()
 	}
 
 	async getImageSizes() {
@@ -213,7 +217,7 @@ export default class App {
 
 	onResize() {
 		this.offsetX = 0
-		this.depth = Math.min(702, window.innerHeight)
+		this.depth = Math.min(MAX_DEPTH, this.depth)
 		this.planeWidths = this.getPlaneWidths()
 		this.setTransform()
 		gui.updateDisplay()

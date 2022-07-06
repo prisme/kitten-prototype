@@ -17,7 +17,6 @@ body {
 	position: relative;
 
 	.world {
-		/* scroll-snap-type: x mandatory; */
 		width: 100%;
 		height: calc(100 * var(--vh));
 		position: absolute;
@@ -33,7 +32,6 @@ body {
 			opacity: 1;
 		}
 		.plane {
-			/* scroll-snap-align: start; */
 			position: absolute;
 			transform-style: preserve-3d;
 			height: calc(100 * var(--vh));
@@ -189,10 +187,10 @@ body {
 
 // dat-gui
 .dg.ac {
-	display: none;
+	/* 	display: none;
 	@media (min-width: $bp) {
 		display: block;
-	}
+	} */
 	z-index: 1 !important;
 	position: fixed !important;
 	bottom: 70px !important;
