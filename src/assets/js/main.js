@@ -11,18 +11,19 @@ window.onload = () => {
 }
 export default class App {
 	constructor() {
-		this.intersection = null
-		this.depth = 555
+		this.hasTooltip = false
+		this.depth = 702
 		this.offsetX = 0
+		this.titleIndex = 0
 		this.planeWidths = []
 		this.imageSizes = []
-		this.edges = []
-		this.currentTitle = document.querySelector('.kitten__dummytitles').textContent
 		this.nodes = {
 			root: document.querySelector('.kitten'),
 			planes: [...document.querySelectorAll('.plane')],
 			world: document.querySelector('.world'),
 			titleTarget: document.querySelector('.kitten__titles'),
+			nav: document.querySelector('.kitten__menu_navigation'),
+			burger: document.querySelector('.kitten__menu_navigation-icon'),
 			activeSlide: null,
 		}
 		this.hold = {
@@ -38,14 +39,9 @@ export default class App {
 	async init() {
 		this.imageSizes = await this.getImageSizes()
 		this.nodes.world.classList.add('loaded')
-		vhCalc()
-		this.onResize()
 		this.addEventListeners()
 		this.createTooltip()
-
-		const { titleTarget, world } = this.nodes
-		titleTarget.textContent = titleTarget ? this.currentTitle : ''
-		world.scrollLeft = 0
+		this.nodes.world.scrollLeft = 0
 
 		gui
 			.add(this, 'depth', 0, window.innerHeight)
@@ -84,9 +80,10 @@ export default class App {
 	}
 
 	createTooltip() {
+		if (!this.hasTooltip) return
 		if (deviceType.isTouch) return
-		const { planes, root } = this.nodes
 		const { hold } = this
+		const { root } = this.nodes
 		hold.tooltip = document.createElement('b')
 		hold.tooltip.classList.add('kitten__tooltip')
 		hold.tooltip.innerText = 'Click & Hold'
@@ -102,13 +99,6 @@ export default class App {
 			const ratioWidth = innerHeight * (width / height)
 			return [...planeWidths, ratioWidth]
 		}, [])
-	}
-
-	handleTitles() {
-		const { activeSlide } = this.nodes
-		if (activeSlide) {
-			this.currentTitle = activeSlide.querySelector('.kitten__dummytitles').textContent
-		}
 	}
 
 	setTransform() {
@@ -162,13 +152,11 @@ export default class App {
 	}
 
 	/**
-	 * Event
+	 * Events
 	 */
 
 	onIntersection(entries) {
-		const { planes } = this.nodes
-
-		entries.forEach((el, i) => {
+		entries.forEach(el => {
 			if (el.isIntersecting) {
 				el.target.classList.add('active')
 			} else {
@@ -177,14 +165,14 @@ export default class App {
 		})
 
 		let visibleSlides = []
-		planes.forEach(el => {
+		this.nodes.planes.forEach(el => {
 			if (el.classList.contains('active')) {
 				visibleSlides.push(el)
 			}
 		})
 
 		let visibleSlidesX = []
-		visibleSlides.forEach((el, i) => {
+		visibleSlides.forEach(el => {
 			visibleSlidesX.push(el.getBoundingClientRect().x)
 		})
 
@@ -192,15 +180,17 @@ export default class App {
 		const index = visibleSlidesX.indexOf(min)
 		this.nodes.activeSlide = visibleSlides[index]
 
-		this.handleTitles()
+		if (!this.nodes.activeSlide) return
+		this.nodes.titleTarget.innerHTML =
+			this.nodes.activeSlide.querySelector('.kitten__dummytitles').innerHTML
 	}
 
-	onTouchMove(event) {
-		if (deviceType.isTouch) return
+	onMouseMove(event) {
 		const { hold } = this
+		const { tooltip } = hold
 
 		if (!hold.showTooltip) {
-			hold.tooltip.style.opacity = 0
+			tooltip.style.opacity = 0
 			return
 		}
 
@@ -209,7 +199,6 @@ export default class App {
 			y: event.clientY,
 		}
 
-		const { tooltip } = hold
 		const { x, y } = hold.cursorPosition
 		const { width } = tooltip.getBoundingClientRect()
 
@@ -220,21 +209,64 @@ export default class App {
 
 	onResize() {
 		this.offsetX = 0
+		this.depth = Math.min(702, window.innerHeight)
 		this.planeWidths = this.getPlaneWidths()
 		this.setTransform()
-
-		// let sum = 0
-		// this.edges = this.planeWidths.map(value => (sum += value))
+		gui.updateDisplay()
 	}
 
 	addEventListeners() {
+		const { nodes } = this
+
+		this.onResize()
 		window.addEventListener('resize', this.onResize.bind(this))
 		window.addEventListener('orientationchange', this.onResize.bind(this))
+		vhCalc()
 
-		window.addEventListener('touchmove', this.onTouchMove.bind(this))
-		window.addEventListener('mousemove', this.onTouchMove.bind(this))
+		Observer.create({
+			target: nodes.world,
+			type: 'wheel,touch,pointer',
+			wheelSpeed: -1.2,
+			onChangeX: self => {
+				if (deviceType.isTouch || !self.isDragging) return
+				self.target.scrollLeft -= self.deltaX
+			},
+			onChangeY: self => {
+				if (deviceType.isTouch || self.isDragging) return
+				self.target.scrollLeft -= self.deltaY
+			},
+			onDrag: () => {
+				if (!this.hasTooltip) return
+				if (this.hold.interval) clearInterval(this.hold.interval)
+				this.hold.showTooltip = false
+			},
+			onDragEnd: () => {
+				if (!this.hasTooltip) return
+				if (this.hold.interval) clearInterval(this.hold.interval)
+				this.hold.showTooltip = true
+			},
+			tolerance: 10,
+			preventDefault: false,
+		})
 
-		this.nodes.planes.forEach(el => {
+		let intersection = new IntersectionObserver(this.onIntersection.bind(this), {
+			root: document.body,
+			rootMargin: '0px',
+			threshold: 0.2,
+		})
+		for (let plane of nodes.planes) {
+			intersection.observe(plane)
+		}
+
+		nodes.burger.addEventListener('click', e => {
+			e.preventDefault()
+			nodes.nav.classList.toggle('active')
+		})
+
+		// tooltip
+		if (!this.hasTooltip) return
+		window.addEventListener('mousemove', this.onMouseMove.bind(this))
+		nodes.planes.forEach(el => {
 			el.addEventListener('mouseenter', () => {
 				if (this.hold.showTooltip) return
 				this.hold.showTooltip = true
@@ -266,52 +298,5 @@ export default class App {
 				this.hold.current = 0
 			})
 		})
-
-		Observer.create({
-			target: this.nodes.world,
-			type: 'wheel,touch,pointer',
-			wheelSpeed: -1.2,
-			onChangeX: self => {
-				const { titleTarget } = this.nodes
-				titleTarget.textContent = titleTarget ? this.currentTitle : ''
-
-				if (!self.isDragging) return
-				self.target.scrollLeft -= self.deltaX
-			},
-			onChangeY: self => {
-				if (self.isDragging) return
-				self.target.scrollLeft -= self.deltaY
-
-				const { titleTarget } = this.nodes
-				titleTarget.textContent = titleTarget ? this.currentTitle : ''
-			},
-			onDrag: () => {
-				if (this.hold.interval) clearInterval(this.hold.interval)
-				this.hold.showTooltip = false
-			},
-			onDragEnd: () => {
-				if (this.hold.interval) clearInterval(this.hold.interval)
-				this.hold.showTooltip = true
-			},
-			tolerance: 10,
-			preventDefault: false,
-		})
-
-		this.intersection = new IntersectionObserver(this.onIntersection.bind(this), {
-			root: null,
-			rootMargin: '0px',
-			threshold: 0.5,
-		})
-		for (let plane of this.nodes.planes) {
-			this.intersection.observe(plane)
-		}
-
-		document.querySelector('.kitten__menu_navigation-icon').addEventListener('click', (ev) => {
-			const nav = document.querySelector('.kitten__menu_navigation')
-
-			console.log('!')
-			ev.preventDefault()
-			nav.classList.contains('active') ? nav.classList.remove('active') : nav.classList.add('active')
-		})	
 	}
 }
