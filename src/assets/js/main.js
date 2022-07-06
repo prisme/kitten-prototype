@@ -230,22 +230,33 @@ export default class App {
 		Observer.create({
 			target: nodes.world,
 			type: 'wheel,touch,pointer',
-			wheelSpeed: -1.2,
+			wheelSpeed: -1,
 			onChangeX: self => {
 				if (deviceType.isTouch || !self.isDragging) return
 				gsap.to(self.target, {
-					scrollTo: { x: self.target.scrollLeft - self.deltaX * 12 },
+					scrollTo: { x: self.target.scrollLeft - self.deltaX * 13 },
 					inertia: {
 						scrollLeft: {
 							velocity: self.velocityX,
+							max: window.innerWidth * 0.8,
 						},
-						duration: { min: 0.2, max: 1 },
+						duration: { min: 0.2, max: 0.8 },
 					},
 				})
 			},
 			onChangeY: self => {
 				if (deviceType.isTouch || self.isDragging) return
-				self.target.scrollLeft -= self.deltaY
+				gsap.to(self.target, {
+					scrollTo: { x: self.target.scrollLeft - self.deltaY * 10 },
+					inertia: {
+						scrollLeft: {
+							velocity: self.velocityY,
+							max: window.innerWidth * 0.8,
+						},
+						duration: { min: 0.2, max: 0.8 },
+					},
+				})
+				// self.target.scrollLeft -= self.deltaY
 			},
 			onDrag: () => {
 				if (!this.hasTooltip) return
@@ -257,7 +268,7 @@ export default class App {
 				if (this.hold.interval) clearInterval(this.hold.interval)
 				this.hold.showTooltip = true
 			},
-			tolerance: 10,
+			tolerance: 20,
 			preventDefault: false,
 		})
 
