@@ -1,9 +1,13 @@
 import * as dat from 'dat.gui'
 import { gsap } from 'gsap'
 import { Observer } from 'gsap/Observer'
+import { InertiaPlugin } from 'gsap/InertiaPlugin'
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { deg2rad, vhCalc, hypothenuse, loadImage, deviceType } from './utils'
 
 gsap.registerPlugin(Observer)
+gsap.registerPlugin(InertiaPlugin)
+gsap.registerPlugin(ScrollToPlugin)
 const gui = new dat.GUI({ closeOnTop: false })
 
 window.onload = () => {
@@ -229,7 +233,15 @@ export default class App {
 			wheelSpeed: -1.2,
 			onChangeX: self => {
 				if (deviceType.isTouch || !self.isDragging) return
-				self.target.scrollLeft -= self.deltaX
+				gsap.to(self.target, {
+					scrollTo: { x: self.target.scrollLeft - self.deltaX * 12 },
+					inertia: {
+						scrollLeft: {
+							velocity: self.velocityX,
+						},
+						duration: { min: 0.2, max: 1 },
+					},
+				})
 			},
 			onChangeY: self => {
 				if (deviceType.isTouch || self.isDragging) return
