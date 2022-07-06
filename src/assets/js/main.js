@@ -1,7 +1,7 @@
 import * as dat from 'dat.gui'
 import { gsap } from 'gsap'
 import { Observer } from 'gsap/Observer'
-import { deg2rad, vhCalc, hypothenuse, containsClass, loadImage, deviceType } from './utils'
+import { deg2rad, vhCalc, hypothenuse, loadImage, deviceType } from './utils'
 
 gsap.registerPlugin(Observer)
 const gui = new dat.GUI({ closeOnTop: false })
@@ -111,13 +111,13 @@ export default class App {
 
 			plane.style.width = `${width}px`
 
-			const method = containsClass(plane, 'front')
+			const method = plane.classList.contains('front')
 				? setFront.bind(this)
-				: containsClass(plane, 'back')
+				: plane.classList.contains('back')
 				? setBack.bind(this)
-				: containsClass(plane, 'left')
+				: plane.classList.contains('left')
 				? setLeft.bind(this)
-				: containsClass(plane, 'right')
+				: plane.classList.contains('right')
 				? setRight.bind(this)
 				: () => {
 						console.error(`missing class on element: ${plane}`)

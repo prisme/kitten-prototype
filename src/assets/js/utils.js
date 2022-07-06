@@ -14,10 +14,6 @@ export function hypothenuse(width, depth) {
 	return Math.sqrt(Math.pow(width, 2) - Math.pow(depth, 2))
 }
 
-export function containsClass(el, className) {
-	return [`${className}`].every(c => el.classList.contains(c))
-}
-
 export async function loadImage(url) {
 	let img = new Image()
 	return await new Promise(resolve => (img.onload = resolve(img)), (img.src = url))
