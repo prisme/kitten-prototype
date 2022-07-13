@@ -145,8 +145,6 @@ export default class Search {
 	 * add searched words
 	 */
 	addWords = () => {
-		// TODO : get random words
-		// TODO : add controls in dat.gui
 		let wordData, word
 		// filter searched words
 		let filteredWordDatas = this.wordDatas
@@ -169,7 +167,7 @@ export default class Search {
 	}
 
 	/**
-	 * TODO : animer le déplacement des mots
+	 * Move words across the screen
 	 */
 	render = () => {
 		this.words.forEach(word => {
