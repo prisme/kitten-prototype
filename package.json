@@ -1,6 +1,6 @@
 {
   "name": "kitten",
-  "source": "src/index.html",
+  "source": "src/search.html",
   "scripts": {
     "start": "parcel -p 7777",
     "build": "parcel build"
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "dat.gui": "^0.7.9",
-    "gsap": "npm:@gsap/shockingly@^3.10.4"
+    "gsap": "npm:@gsap/shockingly@^3.10.4",
+    "lodash": "^4.17.21"
   }
 }

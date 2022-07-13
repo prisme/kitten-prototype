@@ -4,6 +4,7 @@ import { Observer } from 'gsap/Observer'
 import { InertiaPlugin } from 'gsap/InertiaPlugin'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { deg2rad, vhCalc, hypothenuse, loadImage, deviceType } from './utils'
+import Search from './search'
 
 gsap.registerPlugin(Observer)
 gsap.registerPlugin(InertiaPlugin)
@@ -15,6 +16,7 @@ const MAX_DEPTH = 1000
 
 window.onload = () => {
 	new App().init()
+	new Search()
 }
 export default class App {
 	constructor() {
@@ -45,10 +47,11 @@ export default class App {
 
 	async init() {
 		this.imageSizes = await this.getImageSizes()
-		this.nodes.world.classList.add('loaded')
+		this.nodes.world?.classList.add('loaded')
 		this.addEventListeners()
 		this.createTooltip()
-		this.nodes.world.scrollLeft = 0
+		if (this.nodes.world)
+			this.nodes.world.scrollLeft = 0
 
 		gui
 			.add(this, 'depth', 0, MAX_DEPTH)
