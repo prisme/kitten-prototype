@@ -1,19 +1,22 @@
 import * as dat from 'dat.gui'
-import searchData from "./../json/search.json"
+import searchData from './../json/search.json'
 import Word from './word'
 import { gsap } from 'gsap'
 import filter from 'lodash/filter'
 import throttle from 'lodash/throttle'
 import shuffle from 'lodash/shuffle'
-import clone from 'lodash/clone'
+import { vhCalc } from './utils'
+
+const gui = new dat.GUI({ closeOnTop: false })
 
 window.onload = () => {
-	new Search()
+	vhCalc()
+	new Search({ gui })
 }
 export default class Search {
-  constructor({gui}) {
+	constructor({ gui }) {
 		this.maxWord = 20
-		this.speedWord = .0003 // TODO : problème la vitesse dépend de la taille de l'écran
+		this.speedWord = 0.0003 // TODO : problème la vitesse dépend de la taille de l'écran
 		this.searchedWord = ''
 		this.isHidingWords = false
 		this.isShowingWords = false
@@ -40,12 +43,12 @@ export default class Search {
 		gsap.ticker.add(this.render)
 		// add gui
 		this.addGUI(gui)
-  }
+	}
 
 	/**
 	 *
 	 */
-	addGUI = (gui) => {
+	addGUI = gui => {
 		gui
 			.add(this, 'maxWord', 0, 100)
 			.step(1)
@@ -60,10 +63,10 @@ export default class Search {
 			})
 	}
 
- 	/**
- 	 * Call change words when user add new text
- 	 */
- 	formSubmit = (e) => {
+	/**
+	 * Call change words when user add new text
+	 */
+	formSubmit = e => {
 		e.preventDefault()
 		this.searchedWord = this.inputEl.value
 		this.throttledChangeWords()
@@ -74,13 +77,10 @@ export default class Search {
 	 */
 	changeWords = () => {
 		// hidding animation is already playing
-		if (this.isHidingWords)
-			return
+		if (this.isHidingWords) return
 		// stop previous animations
-		if (this.showAnimation)
-			this.showAnimation.kill()
-		if (this.hideAnimation)
-			this.hideAnimation.kill()
+		if (this.showAnimation) this.showAnimation.kill()
+		if (this.hideAnimation) this.hideAnimation.kill()
 		// animate each words to hidden
 		if (this.words.length > 0) {
 			this.hideAnimation = gsap.timeline({
@@ -90,24 +90,21 @@ export default class Search {
 				onComplete: () => {
 					this.isHidingWords = false
 					this.showWords()
-				}
+				},
 			})
 			this.hideAnimation.to(this.words, {
 				opacity: 0,
 				ease: 'Quad.easeOut',
-				duration: .5,
+				duration: 0.5,
 				stagger: 0.02,
-				onComplete: this.removeWords
+				onComplete: this.removeWords,
 			})
-		}
-		else
-			this.showWords()
+		} else this.showWords()
 	}
 
 	showWords = () => {
 		// stop previous animation
-		if (this.showAnimation)
-			this.showAnimation.kill()
+		if (this.showAnimation) this.showAnimation.kill()
 		// add new words
 		this.addWords()
 		// animate each words to visible
@@ -118,7 +115,7 @@ export default class Search {
 				},
 				onComplete: () => {
 					this.isShowingWords = false
-				}
+				},
 			})
 			this.showAnimation.from(this.words, {
 				opacity: 0,
@@ -148,8 +145,7 @@ export default class Search {
 		let wordData, word
 		// filter searched words
 		let filteredWordDatas = this.wordDatas
-		if (this.searchedWord.length > 0)
-			filteredWordDatas = filter(this.wordDatas, this.filterWords)
+		if (this.searchedWord.length > 0) filteredWordDatas = filter(this.wordDatas, this.filterWords)
 		// shuffled words
 		filteredWordDatas = shuffle(filteredWordDatas)
 		const len = filteredWordDatas.length > this.maxWord ? this.maxWord : filteredWordDatas.length
@@ -187,14 +183,17 @@ export default class Search {
 	/**
 	 * Get words with the same characters as the searched one
 	 */
-	filterWords = (word) => {
+	filterWords = word => {
 		return this.normalizeWord(word).indexOf(this.normalizeWord(this.searchedWord)) !== -1
 	}
 
 	/**
 	 * Set to lower case and remove accents
 	 */
-	normalizeWord = (word) => {
-		return word.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+	normalizeWord = word => {
+		return word
+			.toLowerCase()
+			.normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '')
 	}
 }

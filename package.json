@@ -1,19 +1,22 @@
 {
-  "name": "kitten",
-  "source": "src/search.html",
-  "scripts": {
-    "start": "parcel -p 7777",
-    "build": "parcel build"
-  },
-  "devDependencies": {
-    "@parcel/transformer-sass": "^2.6.0",
-    "parcel": "latest",
-    "sass": "^1.52.3",
-    "sharp": "^0.29.3"
-  },
-  "dependencies": {
-    "dat.gui": "^0.7.9",
-    "gsap": "npm:@gsap/shockingly@^3.10.4",
-    "lodash": "^4.17.21"
-  }
+	"name": "kitten",
+	"source": [
+		"src/index.html",
+		"src/search.html"
+	],
+	"scripts": {
+		"start": "parcel -p 7777",
+		"build": "parcel build"
+	},
+	"devDependencies": {
+		"@parcel/transformer-sass": "^2.6.0",
+		"parcel": "latest",
+		"sass": "^1.52.3",
+		"sharp": "^0.29.3"
+	},
+	"dependencies": {
+		"dat.gui": "^0.7.9",
+		"gsap": "npm:@gsap/shockingly@^3.10.4",
+		"lodash": "^4.17.21"
+	}
 }

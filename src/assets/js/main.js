@@ -4,7 +4,6 @@ import { Observer } from 'gsap/Observer'
 import { InertiaPlugin } from 'gsap/InertiaPlugin'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { deg2rad, vhCalc, hypothenuse, loadImage, deviceType } from './utils'
-import Search from './search'
 
 gsap.registerPlugin(Observer)
 gsap.registerPlugin(InertiaPlugin)
@@ -15,12 +14,10 @@ const DEPTH = 702
 const MAX_DEPTH = 1000
 
 window.onload = () => {
-	// new App({gui}).init()
-	new App({}).init()
-	new Search({gui})
+	new App({ gui }).init()
 }
 export default class App {
-	constructor({gui}) {
+	constructor({ gui }) {
 		this.gui = gui
 		this.hasTooltip = false
 		this.depth = DEPTH
@@ -52,8 +49,7 @@ export default class App {
 		this.nodes.world?.classList.add('loaded')
 		this.addEventListeners()
 		this.createTooltip()
-		if (this.nodes.world)
-			this.nodes.world.scrollLeft = 0
+		if (this.nodes.world) this.nodes.world.scrollLeft = 0
 
 		if (this.gui)
 			this.gui
@@ -226,8 +222,7 @@ export default class App {
 		this.depth = Math.min(MAX_DEPTH, this.depth)
 		this.planeWidths = this.getPlaneWidths()
 		this.setTransform()
-		if (this.gui)
-			this.gui.updateDisplay()
+		if (this.gui) this.gui.updateDisplay()
 	}
 
 	addEventListeners() {
