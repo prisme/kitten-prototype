@@ -123,6 +123,8 @@ body {
 			font-size: 56px;
 			margin: 20px;
 			z-index: 1;
+			color: var(--white);
+			text-decoration: none;
 		}
 
 		&_navigation {
@@ -173,11 +175,19 @@ body {
 				ol {
 					display: flex;
 					flex-direction: row;
+				}
 
-					li {
-						padding: 0 20px;
-						height: 24px;
-						line-height: 1;
+				li {
+					padding: 0 20px;
+					height: 24px;
+					line-height: 1;
+				}
+
+				a {
+					color: var(--white);
+					text-decoration: none;
+					&:hover {
+						text-decoration: underline;
 					}
 				}
 			}
@@ -223,4 +233,13 @@ body {
 			}
 		}
 	}
+}
+
+.visually-hidden {
+	position: absolute !important;
+	height: 1px;
+	width: 1px;
+	overflow: hidden;
+	clip: rect(1px, 1px, 1px, 1px);
+	word-wrap: normal;
 }
