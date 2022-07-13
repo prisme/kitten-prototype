@@ -13,7 +13,11 @@ export default class Word {
     this.setVelocityAngle(Math.random() * Math.PI * 2)
     this.el = document.createElement('li')
 		this.el.classList.add('search__word')
-		this.el.textContent = label
+    const linkEl = document.createElement('a')
+    linkEl.setAttribute('href', 'TODO')
+    linkEl.setAttribute('target', 'blank')
+    linkEl.textContent = label
+    this.el.appendChild(linkEl)
   }
 
   /**

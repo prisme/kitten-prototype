@@ -34,8 +34,13 @@
     position: absolute;
     top: 0;
     left: 0;
-    font-family: Arial, sans-serif;
-    font-size: 18px;
+    a {
+      padding: 10px;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      color: var(--white);
+      text-decoration: none;
+    }
   }
   &__kitten {
     position: absolute;
