@@ -3,7 +3,7 @@ import Word from './word'
 import { gsap } from 'gsap'
 import filter from 'lodash/filter'
 import throttle from 'lodash/throttle'
-import debounce from 'lodash/debounce'
+import shuffle from 'lodash/shuffle'
 import clone from 'lodash/clone'
 
 window.onload = () => {
@@ -125,11 +125,15 @@ export default class Search {
 	 * add searched words
 	 */
 	addWords = () => {
+		// TODO : get random words
+		// TODO : add controls in dat.gui
 		let wordData, word
 		// filter searched words
 		let filteredWordDatas = this.wordDatas
 		if (this.searchedWord.length > 0)
 			filteredWordDatas = filter(this.wordDatas, this.filterWords)
+		// shuffled words
+		filteredWordDatas = shuffle(filteredWordDatas)
 		const len = filteredWordDatas.length > this.maxWord ? this.maxWord : filteredWordDatas.length
 		// create words
 		for (let i = 0; i < len; i++) {
