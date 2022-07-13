@@ -15,11 +15,13 @@ const DEPTH = 702
 const MAX_DEPTH = 1000
 
 window.onload = () => {
-	new App().init()
-	new Search()
+	// new App({gui}).init()
+	new App({}).init()
+	new Search({gui})
 }
 export default class App {
-	constructor() {
+	constructor({gui}) {
+		this.gui = gui
 		this.hasTooltip = false
 		this.depth = DEPTH
 		this.offsetX = 0
@@ -53,14 +55,15 @@ export default class App {
 		if (this.nodes.world)
 			this.nodes.world.scrollLeft = 0
 
-		gui
-			.add(this, 'depth', 0, MAX_DEPTH)
-			.step(1)
-			.onChange(val => {
-				this.depth = val
-				this.onResize()
-			})
-		// gui.hide()
+		if (this.gui)
+			this.gui
+				.add(this, 'depth', 0, MAX_DEPTH)
+				.step(1)
+				.onChange(val => {
+					this.depth = val
+					this.onResize()
+				})
+		// this.gui.hide()
 	}
 
 	async getImageSizes() {
@@ -223,7 +226,8 @@ export default class App {
 		this.depth = Math.min(MAX_DEPTH, this.depth)
 		this.planeWidths = this.getPlaneWidths()
 		this.setTransform()
-		gui.updateDisplay()
+		if (this.gui)
+			this.gui.updateDisplay()
 	}
 
 	addEventListeners() {

@@ -1,4 +1,5 @@
-import searchData from "./../json/search.json";
+import * as dat from 'dat.gui'
+import searchData from "./../json/search.json"
 import Word from './word'
 import { gsap } from 'gsap'
 import filter from 'lodash/filter'
@@ -10,18 +11,20 @@ window.onload = () => {
 	new Search()
 }
 export default class Search {
-  constructor() {
+  constructor({gui}) {
 		this.maxWord = 20
+		this.speedWord = .0003 // TODO : problème la vitesse dépend de la taille de l'écran
 		this.searchedWord = ''
 		this.isHidingWords = false
 		this.isShowingWords = false
-		// this.previousSearchedWord = ''
 		// prevent script when search element doesn't exist
 		this.searchEl = document.querySelector('.search')
 		if (!this.searchEl) return
 		this.formEl = this.searchEl.querySelector('.search__form')
 		this.inputEl = this.searchEl.querySelector('.search__input')
 		this.listEl = this.searchEl.querySelector('.search__list')
+		// reduce the number of times change words can be called in a row
+		this.throttledChangeWords = throttle(this.changeWords, 100)
 		// listen to user typing
 		this.formEl.addEventListener('submit', this.formSubmit)
 		this.inputEl.addEventListener('input', this.formSubmit)
@@ -35,7 +38,27 @@ export default class Search {
 		setTimeout(this.changeWords, 100) // TODO : fix vh is calculated after search initialisation
 		// start render loop
 		gsap.ticker.add(this.render)
+		// add gui
+		this.addGUI(gui)
   }
+
+	/**
+	 *
+	 */
+	addGUI = (gui) => {
+		gui
+			.add(this, 'maxWord', 0, 100)
+			.step(1)
+			.onChange(val => {
+				this.throttledChangeWords()
+			})
+		gui
+			.add(this, 'speedWord', 0.00001, 0.0005)
+			.step(0.00001)
+			.onChange(val => {
+				this.throttledChangeWords()
+			})
+	}
 
  	/**
  	 * Call change words when user add new text
@@ -43,9 +66,6 @@ export default class Search {
  	formSubmit = (e) => {
 		e.preventDefault()
 		this.searchedWord = this.inputEl.value
-		// reduce the number of times change words can be called in a row
-		if (!this.throttledChangeWords)
-			this.throttledChangeWords = throttle(this.changeWords, 100)
 		this.throttledChangeWords()
 	}
 
@@ -141,7 +161,7 @@ export default class Search {
 			// TODO : add pool design pattern to optimize memory
 			word = new Word({
 				label: wordData,
-				speed: .0003,
+				speed: this.speedWord,
 			})
 			this.words.push(word)
 			word.append(this.listEl)
