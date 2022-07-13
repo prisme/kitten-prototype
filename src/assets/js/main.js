@@ -46,10 +46,12 @@ export default class App {
 
 	async init() {
 		this.imageSizes = await this.getImageSizes()
-		this.nodes.world?.classList.add('loaded')
 		this.addEventListeners()
 		this.createTooltip()
-		if (this.nodes.world) this.nodes.world.scrollLeft = 0
+		if (this.nodes.world) {
+			this.nodes.world.classList.add('loaded')
+			this.nodes.world.scrollLeft = 0
+		}
 
 		if (this.gui)
 			this.gui
@@ -59,7 +61,6 @@ export default class App {
 					this.depth = val
 					this.onResize()
 				})
-		// this.gui.hide()
 	}
 
 	async getImageSizes() {
@@ -93,11 +94,10 @@ export default class App {
 		if (!this.hasTooltip) return
 		if (deviceType.isTouch) return
 		const { hold } = this
-		const { root } = this.nodes
 		hold.tooltip = document.createElement('b')
 		hold.tooltip.classList.add('kitten__tooltip')
 		hold.tooltip.innerText = 'Click & Hold'
-		root.appendChild(hold.tooltip)
+		this.nodes.root.appendChild(hold.tooltip)
 	}
 
 	getPlaneWidths() {
