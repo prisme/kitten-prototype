@@ -6,11 +6,13 @@ import filter from 'lodash/filter'
 import throttle from 'lodash/throttle'
 import shuffle from 'lodash/shuffle'
 import { vhCalc } from './utils'
+import Menu from './menu'
 
 const gui = new dat.GUI({ closeOnTop: false })
 
 window.onload = () => {
 	vhCalc()
+	new Menu()
 	new Search({ gui })
 }
 export default class Search {
@@ -103,7 +105,7 @@ export default class Search {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	showWords = () => {
 		// stop previous animation

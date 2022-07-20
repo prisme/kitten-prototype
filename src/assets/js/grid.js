@@ -49,7 +49,7 @@ export default class Grid {
 		this.mobileBreakpoint = 768
 		this.isMobileDevice = false
 		this.currentMediaEl = null
-		// prevent script when search element doesn't exist
+		// prevent script when project element doesn't exist
 		this.projectEl = document.querySelector('.project')
 		if (!this.projectEl) return
 		this.listEl = this.projectEl.querySelector('.project__list')
