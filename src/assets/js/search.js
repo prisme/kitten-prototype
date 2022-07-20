@@ -29,8 +29,8 @@ export default class Search {
 		// reduce the number of times change words can be called in a row
 		this.throttledChangeWords = throttle(this.changeWords, 100)
 		// listen to user typing
-		this.formEl.addEventListener('submit', this.formSubmit)
-		this.inputEl.addEventListener('input', this.formSubmit)
+		this.formEl.addEventListener('submit', this.onSubmitForm)
+		this.inputEl.addEventListener('input', this.onSubmitForm)
 		// get all words from JSON data
 		this.wordDatas = []
 		this.wordDatas = this.wordDatas.concat(searchData.Collaborators)
@@ -40,7 +40,7 @@ export default class Search {
 		this.words = []
 		setTimeout(this.changeWords, 100) // TODO : fix vh is calculated after search initialisation
 		// start render loop
-		gsap.ticker.add(this.render)
+		gsap.ticker.add(this.onRender)
 		// add gui
 		this.addGUI(gui)
 	}
@@ -66,7 +66,7 @@ export default class Search {
 	/**
 	 * Call change words when user add new text
 	 */
-	formSubmit = e => {
+	onSubmitForm = e => {
 		e.preventDefault()
 		this.searchedWord = this.inputEl.value
 		this.throttledChangeWords()
@@ -102,6 +102,9 @@ export default class Search {
 		} else this.showWords()
 	}
 
+	/**
+	 * 
+	 */
 	showWords = () => {
 		// stop previous animation
 		if (this.showAnimation) this.showAnimation.kill()
@@ -165,7 +168,7 @@ export default class Search {
 	/**
 	 * Move words across the screen
 	 */
-	render = () => {
+	onRender = () => {
 		this.words.forEach(word => {
 			word.update()
 		})
@@ -175,7 +178,7 @@ export default class Search {
 	 * Clean before destroy
 	 */
 	destroy = () => {
-		gsap.ticker.remove(this.render)
+		gsap.ticker.remove(this.onRender)
 		this.removeWords()
 		// TODO : autre ?
 	}
