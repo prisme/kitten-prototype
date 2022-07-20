@@ -3,6 +3,7 @@
 	"source": [
 		"src/index.html",
 		"src/search.html",
+		"src/projects.html",
 		"src/project.html"
 	],
 	"scripts": {
