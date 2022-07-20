@@ -14,10 +14,11 @@ const DEPTH = 702
 const MAX_DEPTH = 1000
 
 window.onload = () => {
-	new App().init()
+	new App({ gui }).init()
 }
 export default class App {
-	constructor() {
+	constructor({ gui }) {
+		this.gui = gui
 		this.hasTooltip = false
 		this.depth = DEPTH
 		this.offsetX = 0
@@ -45,19 +46,21 @@ export default class App {
 
 	async init() {
 		this.imageSizes = await this.getImageSizes()
-		this.nodes.world.classList.add('loaded')
 		this.addEventListeners()
 		this.createTooltip()
-		this.nodes.world.scrollLeft = 0
+		if (this.nodes.world) {
+			this.nodes.world.classList.add('loaded')
+			this.nodes.world.scrollLeft = 0
+		}
 
-		gui
-			.add(this, 'depth', 0, MAX_DEPTH)
-			.step(1)
-			.onChange(val => {
-				this.depth = val
-				this.onResize()
-			})
-		// gui.hide()
+		if (this.gui)
+			this.gui
+				.add(this, 'depth', 0, MAX_DEPTH)
+				.step(1)
+				.onChange(val => {
+					this.depth = val
+					this.onResize()
+				})
 	}
 
 	async getImageSizes() {
@@ -91,11 +94,10 @@ export default class App {
 		if (!this.hasTooltip) return
 		if (deviceType.isTouch) return
 		const { hold } = this
-		const { root } = this.nodes
 		hold.tooltip = document.createElement('b')
 		hold.tooltip.classList.add('kitten__tooltip')
 		hold.tooltip.innerText = 'Click & Hold'
-		root.appendChild(hold.tooltip)
+		this.nodes.root.appendChild(hold.tooltip)
 	}
 
 	getPlaneWidths() {
@@ -220,7 +222,7 @@ export default class App {
 		this.depth = Math.min(MAX_DEPTH, this.depth)
 		this.planeWidths = this.getPlaneWidths()
 		this.setTransform()
-		gui.updateDisplay()
+		if (this.gui) this.gui.updateDisplay()
 	}
 
 	addEventListeners() {

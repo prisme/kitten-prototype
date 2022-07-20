@@ -1,0 +1,52 @@
+.search {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100 * var(--vh));
+  &__form {
+    position: absolute;
+    bottom: calc(79 * var(--vh));
+    left: 20px;
+  }
+  &__label {
+    margin-right: 20px;
+    font-size: 18px;
+    text-transform: uppercase;
+  }
+  &__input {
+    width: 300px;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--white);
+    font-family: Arial, sans-serif;
+    color: var(--white);
+  }
+  &__list {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: calc(75 * var(--vh));
+    padding: 0;
+    overflow: hidden;
+  }
+  &__word {
+    position: absolute;
+    top: 0;
+    left: 0;
+    a {
+      padding: 10px;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      color: var(--white);
+      text-decoration: none;
+    }
+  }
+  &__kitten {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 100px;
+  }
+}
