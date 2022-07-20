@@ -11,18 +11,21 @@ const gui = new dat.GUI({ closeOnTop: false })
 window.onload = () => {
 	vhCalc()
 	new Project({ gui })
-	convertJSONToHTML()
+	// convertJSONToHTML()
 }
 
 /**
  * Helper to get all the projects in html format
  * It's automaticaly copy/paste if you have DOM focused
  */
-convertJSONToHTML = () => {
+const convertJSONToHTML = () => {
 	let result = ''
 	projectData.medias.forEach((mediaData, index) => {
-		const sizeClass = mediaData.size > 1 && mediaData.size <= 4 ? ` project__media--width${mediaData.size}` : ''
-		const flagClass = mediaData.flag ? ` project__media--flag project__media--flag--${mediaData.flag}` : ''
+		const sizeClass =
+			mediaData.size > 1 && mediaData.size <= 4 ? ` project__media--width${mediaData.size}` : ''
+		const flagClass = mediaData.flag
+			? ` project__media--flag project__media--flag--${mediaData.flag}`
+			: ''
 		result += `<li class="project__media${sizeClass}${flagClass}" data-title="${mediaData.title} (debug:${index})">`
 		result += `<img src="${mediaData.image}" alt="${mediaData.title}">`
 		// TODO : should be optimized
@@ -53,7 +56,7 @@ export default class Project {
 		this.msnry = new Masonry(this.listEl, {
 			itemSelector: '.project__media',
 			columnWidth: '.project__sizer',
-  		percentPosition: true,
+			percentPosition: true,
 			transitionDuration: 0,
 		})
 		// add actions listeners
@@ -70,9 +73,7 @@ export default class Project {
 	/**
 	 *
 	 */
-	addGUI = gui => {
-
-	}
+	addGUI = gui => {}
 
 	/**
 	 * Add over listener to medias
@@ -89,10 +90,9 @@ export default class Project {
 	/**
 	 * Show overed media title on tablet/desktop devices
 	 */
-	onMediaOver = (e) => {
+	onMediaOver = e => {
 		// cancel on mobile devices
-		if (this.isMobileDevice)
-			return
+		if (this.isMobileDevice) return
 		const medialEl = e.currentTarget
 		this.changeMedia(medialEl)
 	}
@@ -100,10 +100,9 @@ export default class Project {
 	/**
 	 * Hide unovered media title on tablet/desktop devices
 	 */
-	onMediaOut = (e) => {
+	onMediaOut = e => {
 		// cancel on mobile devices
-		if (this.isMobileDevice)
-			return
+		if (this.isMobileDevice) return
 		const medialEl = e.currentTarget
 		this.changeMedia(null)
 	}
@@ -112,15 +111,13 @@ export default class Project {
 	 * Hide previous title
 	 * then wait css animation end to show new
 	 */
-	changeMedia = (mediaEl) => {
+	changeMedia = mediaEl => {
 		const previousMediaEl = this.currentMediaEl
 		// cancel when it's same media
-		if (previousMediaEl === mediaEl)
-			return
+		if (previousMediaEl === mediaEl) return
 		this.currentMediaEl = mediaEl
 		// force to wait hide animation complete first
-		if (this.isHidding)
-			return
+		if (this.isHidding) return
 		// hide previous media before showing current
 		if (previousMediaEl) {
 			this.isHidding = true
@@ -132,8 +129,7 @@ export default class Project {
 			}
 			this.transitionTimeout = setTimeout(this.showMedia, 100)
 			this.titleEl.classList.remove('project__title--visible')
-		}
-		else {
+		} else {
 			this.showMedia()
 		}
 	}
@@ -155,9 +151,8 @@ export default class Project {
 	 */
 	onRender = () => {
 		// cancel on tablet/desktop devices
-		if (!this.isMobileDevice)
-			return
-		const screenVerticalCenter = window.innerHeight * .5
+		if (!this.isMobileDevice) return
+		const screenVerticalCenter = window.innerHeight * 0.5
 		let mediaRect
 		let mediaVerticalCenter
 		let mediaPosDiff
@@ -167,14 +162,14 @@ export default class Project {
 		// by comparing the distance between each media vertical center to the screen
 		this.mediaEls.forEach((mediaEl, index) => {
 			mediaRect = mediaEl.getBoundingClientRect()
-			mediaVerticalCenter = mediaRect.y + mediaRect.height * .5
+			mediaVerticalCenter = mediaRect.y + mediaRect.height * 0.5
 			mediaPosDiff = Math.abs(screenVerticalCenter - mediaVerticalCenter)
 			if (!closestMediaEl || mediaPosDiff < closestMediaPosDiff) {
 				closestMediaEl = mediaEl
 				closestMediaPosDiff = mediaPosDiff
 			}
 		})
-		if (closestMediaEl) {
+		if (closestMediaEl) {
 			this.changeMedia(closestMediaEl)
 		}
 	}
@@ -194,23 +189,21 @@ export default class Project {
 		let mediaToggleEl
 		this.mediaEls.forEach((mediaEl, index) => {
 			mediaToggleEl = mediaEl.querySelector('.project__media__toggle')
-			if (mediaToggleEl)
-				mediaToggleEl.addEventListener('click', this.onToggleClick)
+			if (mediaToggleEl) mediaToggleEl.addEventListener('click', this.onToggleClick)
 		})
 	}
 
 	/**
 	 * Play/pause video and switch view elements
 	 */
-	onToggleClick = (e) => {
+	onToggleClick = e => {
 		const mediaEl = e.currentTarget.closest('.project__media')
 		const mediaVideoEl = mediaEl.querySelector('video')
 		if (mediaEl.classList.contains('project__media--playing')) {
 			mediaEl.classList.remove('project__media--playing')
 			mediaVideoEl.removeEventListener('ended', this.onVideoEnded)
 			mediaVideoEl.pause()
-		}
-		else {
+		} else {
 			mediaEl.classList.add('project__media--playing')
 			mediaVideoEl.addEventListener('ended', this.onVideoEnded)
 			mediaVideoEl.play()
@@ -220,7 +213,7 @@ export default class Project {
 	/**
 	 * Reset player when video end
 	 */
-	onVideoEnded = (e) => {
+	onVideoEnded = e => {
 		const mediaEl = e.currentTarget.closest('.project__media')
 		const mediaVideoEl = mediaEl.querySelector('video')
 		mediaVideoEl.removeEventListener('ended', this.onVideoEnded)
