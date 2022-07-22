@@ -1,0 +1,98 @@
+.about {
+	padding-top: 125px;
+	padding: 125px 20px 50px 20px;
+	font-family: Arial, sans-serif;
+	font-size: 18px;
+	line-height: 21px;
+	@media screen and (min-width: 768px) {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-template-rows: 1fr 1fr 1fr 1fr;
+		gap: 0px 76px;
+		grid-auto-flow: row;
+		grid-template-areas:
+			'presentation addresses'
+			'job emails';
+	}
+	a {
+		color: var(--white);
+		text-decoration: underline;
+	}
+	&__presentation {
+		grid-area: presentation;
+		p {
+			margin: 0;
+			padding: 0;
+			&:not(:last-child) {
+				padding-bottom: 20px;
+			}
+		}
+	}
+	&__job {
+		grid-area: job;
+		height: auto;
+		margin-top: 2em;
+	}
+	&__addresses {
+		grid-area: addresses;
+		padding: 0;
+		margin-top: 2em;
+		@media screen and (min-width: 768px) {
+			margin-top: 0px;
+		}
+		// width: 100%;
+		// margin-top: 2em;
+		// @media screen and (min-width: 768px) {
+		//   width: 45%;
+		//   margin-top: 0;
+		// }
+	}
+	&__address {
+		position: relative;
+		&:not(:last-child) {
+			padding-bottom: 15px;
+		}
+		&--flag {
+			$flagHeight: 15px;
+			padding-top: $flagHeight + 5px;
+			&:after {
+				content: '';
+				display: block;
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: $flagHeight;
+				background-size: 100% 100%;
+				image-rendering: -webkit-optimize-contrast;
+			}
+			&--fr:after {
+				background-image: url(../img/flags/fr.png);
+			}
+			&--it:after {
+				background-image: url(../img/flags/it.png);
+			}
+			&--es:after {
+				background-image: url(../img/flags/es.png);
+			}
+			&--us:after {
+				background-image: url(../img/flags/us.png);
+			}
+		}
+	}
+	&__emails {
+		grid-area: emails;
+		margin-top: 2em;
+		@media screen and (min-width: 768px) {
+			margin-top: 0px;
+		}
+		padding: 0;
+	}
+	&__email {
+		padding: 0.5em 0;
+		&__title {
+			display: block;
+			text-transform: uppercase;
+		}
+	}
+}

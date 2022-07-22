@@ -4,6 +4,7 @@ import { Observer } from 'gsap/Observer'
 import { InertiaPlugin } from 'gsap/InertiaPlugin'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { deg2rad, vhCalc, hypothenuse, loadImage, deviceType } from './utils'
+import Menu from './menu'
 
 gsap.registerPlugin(Observer)
 gsap.registerPlugin(InertiaPlugin)
@@ -30,8 +31,6 @@ export default class App {
 			planes: [...document.querySelectorAll('.plane')],
 			world: document.querySelector('.world'),
 			titleTarget: document.querySelector('.kitten__titles'),
-			nav: document.querySelector('.kitten__menu_navigation'),
-			burger: document.querySelector('.kitten__menu_navigation-icon'),
 			activeSlide: null,
 		}
 		this.hold = {
@@ -42,6 +41,7 @@ export default class App {
 			current: 0,
 			cursorPosition: { x: 0, y: 0 },
 		}
+		new Menu()
 	}
 
 	async init() {
@@ -275,11 +275,6 @@ export default class App {
 		for (let plane of nodes.planes) {
 			intersection.observe(plane)
 		}
-
-		nodes.burger.addEventListener('click', e => {
-			e.preventDefault()
-			nodes.nav.classList.toggle('active')
-		})
 
 		// tooltip
 		if (!this.hasTooltip) return

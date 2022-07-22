@@ -1,0 +1,30 @@
+{
+  "medias": [
+    {
+      "image": "assets/img/project/4266_rela_2.jpg",
+      "size": 4,
+      "video": "assets/img/project/tfr_edit_220112_16-9.mov"
+    },
+    {
+      "image": "assets/img/project/4266_rela_01.jpg",
+      "size": 2,
+    },
+    {
+      "image": "assets/img/project/4266_rela_02.jpg",
+      "size": 1,
+    },
+    {
+      "image": "assets/img/project/4266_rela_3.jpg",
+      "size": 1,
+    },
+    {
+      "image": "assets/img/project/4266_rela_04.jpg",
+      "size": 2,
+      "video": "assets/img/project/tfr_edit_220112_9-16.mov"
+    },
+    {
+      "image": "assets/img/project/4266_rela_5.jpg",
+      "size": 1,
+    },
+  ]
+}
