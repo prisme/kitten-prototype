@@ -41,13 +41,16 @@
       image-rendering: -webkit-optimize-contrast;
     }
     &--fr:after {
-      background-image: url(../img/flags/france.png);
+      background-image: url(../img/flags/fr.png);
     }
     &--it:after {
-      background-image: url(../img/flags/italy.png);
+      background-image: url(../img/flags/it.png);
     }
     &--es:after {
-      background-image: url(../img/flags/spain.png);
+      background-image: url(../img/flags/es.png);
+    }
+    &--us:after {
+      background-image: url(../img/flags/us.png);
     }
   }
   &__media video {
