@@ -80,6 +80,14 @@ body {
 		font-weight: lighter;
 	}
 
+	&__news {
+		position: fixed;
+		bottom: 15px;
+		right: 10px;
+		width: 100px;
+		z-index: 1;
+	}
+
 	&__tooltip {
 		user-select: none;
 		position: fixed;

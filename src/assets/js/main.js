@@ -31,6 +31,7 @@ export default class App {
 			planes: [...document.querySelectorAll('.plane')],
 			world: document.querySelector('.world'),
 			titleTarget: document.querySelector('.kitten__titles'),
+			news: document.querySelector('.kitten__news'),
 			activeSlide: null,
 		}
 		this.hold = {
@@ -193,6 +194,8 @@ export default class App {
 		if (!this.nodes.activeSlide) return
 		this.nodes.titleTarget.innerHTML =
 			this.nodes.activeSlide.querySelector('.kitten__dummytitles').innerHTML
+		
+		this.nodes.news.style.visibility = this.nodes.activeSlide.dataset.news ? 'visible' : 'hidden'
 	}
 
 	onMouseMove(event) {
