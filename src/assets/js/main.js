@@ -20,7 +20,7 @@ window.onload = () => {
 export default class App {
 	constructor({ gui }) {
 		this.gui = gui
-		this.hasTooltip = false
+		this.hasTooltip = true
 		this.depth = DEPTH
 		this.offsetX = 0
 		this.titleIndex = 0
@@ -99,6 +99,10 @@ export default class App {
 		hold.tooltip.classList.add('kitten__tooltip')
 		hold.tooltip.innerText = 'Click & Hold'
 		this.nodes.root.appendChild(hold.tooltip)
+		hold.buffer = document.createElement('span')
+		hold.buffer.classList.add('kitten__tooltip__buffer')
+		hold.buffer.innerHTML = '<svg viewBox="0 0 36 36"><path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /></svg>'
+		hold.tooltip.appendChild(hold.buffer)
 	}
 
 	getPlaneWidths() {
@@ -294,23 +298,26 @@ export default class App {
 				if (deviceType.isTouch) return
 				if (this.hold.interval) clearInterval(this.hold.interval)
 				// this.hold.tooltip.showTooltip = false // implement getter/setter? https://stackoverflow.com/a/37403125
-				this.hold.tooltip.style.opacity = 0
+				// this.hold.tooltip.style.opacity = 0
+				this.hold.buffer.style.strokeDasharray = '0 100';
 
 				this.hold.interval = setInterval(() => {
 					console.log(this.hold.current)
 					if (this.hold.current >= 100) {
-						alert('open project detail page')
+						window.location.href = 'project.html'
 						clearInterval(this.hold.interval)
 						return
 					}
-					this.hold.current += 10
-				}, 100)
+					this.hold.current++
+					this.hold.buffer.style.strokeDasharray = `${this.hold.current} 100`;
+				}, 10)
 			})
 			el.addEventListener('mouseup', () => {
 				if (deviceType.isTouch) return
 				if (this.hold.interval) clearInterval(this.hold.interval)
 				// this.hold.tooltip.showTooltip = true // implement getter/setter? https://stackoverflow.com/a/37403125
-				this.hold.tooltip.style.opacity = 0
+				// this.hold.tooltip.style.opacity = 0
+				this.hold.buffer.style.strokeDasharray = '0 100';
 				this.hold.current = 0
 			})
 		})
