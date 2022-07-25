@@ -17,7 +17,8 @@ window.onload = () => {
 }
 export default class Search {
 	constructor({ gui }) {
-		this.maxWord = 20
+		this.maxWord = 1
+		this.wordRatio = 1
 		this.speedWord = 0.0003 // TODO : problème la vitesse dépend de la taille de l'écran
 		this.searchedWord = ''
 		this.isHidingWords = false
@@ -38,6 +39,10 @@ export default class Search {
 		this.wordDatas = this.wordDatas.concat(searchData.Collaborators)
 		this.wordDatas = this.wordDatas.concat(searchData.Brands)
 		this.wordDatas = this.wordDatas.concat(searchData.Editorial)
+		// calculate max words possible to display on screen
+		this.resizeThrottle = throttle(this.onResize, 100)
+		window.addEventListener('resize', this.resizeThrottle)
+		this.resizeThrottle(true)
 		// add default words
 		this.words = []
 		setTimeout(this.changeWords, 100) // TODO : fix vh is calculated after search initialisation
@@ -52,10 +57,10 @@ export default class Search {
 	 */
 	addGUI = gui => {
 		gui
-			.add(this, 'maxWord', 0, 100)
-			.step(1)
+			.add(this, 'wordRatio', 0.1, 1)
+			.step(.01)
 			.onChange(val => {
-				this.throttledChangeWords()
+				this.resizeThrottle()
 			})
 		gui
 			.add(this, 'speedWord', 0.00001, 0.0005)
@@ -177,10 +182,22 @@ export default class Search {
 	}
 
 	/**
+	 * Calculate the number of words possible to display on the screen
+	 */
+	onResize = (isInit) => {
+		const totalArea = window.innerWidth * window.innerHeight
+		const wordArea = 200 * 40 // calculated using approximate width and height of one word
+		this.maxWord = Math.round(totalArea / wordArea * this.wordRatio)
+		if (isInit !== true)
+			this.throttledChangeWords()
+	}
+
+	/**
 	 * Clean before destroy
 	 */
 	destroy = () => {
 		gsap.ticker.remove(this.onRender)
+		window.removeEventListener('resize', this.resizeThrottle)
 		this.removeWords()
 		// TODO : autre ?
 	}
