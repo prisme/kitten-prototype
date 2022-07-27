@@ -6,7 +6,7 @@
   height: calc(100 * var(--vh));
   &__form {
     position: absolute;
-    bottom: calc(79 * var(--vh));
+    top: 125px;
     left: 20px;
   }
   &__label {
@@ -24,10 +24,10 @@
   }
   &__list {
     position: absolute;
+    top: 200px;
     bottom: 0;
     left: 0;
-    width: 100%;
-    height: calc(75 * var(--vh));
+    right: 0;
     padding: 0;
     overflow: hidden;
   }

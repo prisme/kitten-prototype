@@ -80,10 +80,19 @@ body {
 		font-weight: lighter;
 	}
 
+	&__news {
+		position: fixed;
+		bottom: 15px;
+		right: 10px;
+		width: 100px;
+		z-index: 2;
+		transition: opacity 0.2s ease-in;
+	}
+
 	&__tooltip {
 		user-select: none;
 		position: fixed;
-		mix-blend-mode: difference;
+		// mix-blend-mode: difference;
 		z-index: 3;
 		font-family: Arial, sans-serif;
 		font-weight: lighter;
@@ -92,7 +101,26 @@ body {
 		font-size: 9px;
 		white-space: nowrap;
 		opacity: 1;
-		transition: opacity 0.3s ease-in-out;
+		&__buffer {
+			position: absolute;
+			top: -35px;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 30px;
+			height: 30px;
+			pointer-events: none;
+			stroke-dasharray: 0 100;
+			svg {
+				display: block;
+				width: 100%;
+				path {
+					fill: none;
+					stroke: #eee;
+					stroke-width: 2;
+					animation: dash 0.1s linear;
+				}
+			}
+		}
 	}
 
 	&__overlay {
