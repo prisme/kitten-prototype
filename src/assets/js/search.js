@@ -18,7 +18,7 @@ window.onload = () => {
 export default class Search {
 	constructor({ gui }) {
 		this.maxWord = 1
-		this.wordRatio = 1
+		this.wordRatio = 0.5
 		this.speedWord = 0.0003 // TODO : problème la vitesse dépend de la taille de l'écran
 		this.searchedWord = ''
 		this.isHidingWords = false
@@ -57,8 +57,8 @@ export default class Search {
 	 */
 	addGUI = gui => {
 		gui
-			.add(this, 'wordRatio', 0.1, 1)
-			.step(.01)
+			.add(this, 'wordRatio', 0.1, 0.5)
+			.step(0.01)
 			.onChange(val => {
 				this.resizeThrottle()
 			})
@@ -184,12 +184,11 @@ export default class Search {
 	/**
 	 * Calculate the number of words possible to display on the screen
 	 */
-	onResize = (isInit) => {
+	onResize = isInit => {
 		const totalArea = window.innerWidth * window.innerHeight
 		const wordArea = 200 * 40 // calculated using approximate width and height of one word
-		this.maxWord = Math.round(totalArea / wordArea * this.wordRatio)
-		if (isInit !== true)
-			this.throttledChangeWords()
+		this.maxWord = Math.round((totalArea / wordArea) * this.wordRatio)
+		if (isInit !== true) this.throttledChangeWords()
 	}
 
 	/**
