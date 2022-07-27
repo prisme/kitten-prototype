@@ -37,7 +37,6 @@ export default class App {
 		this.hold = {
 			tooltip: null,
 			interval: null,
-			showTooltip: false,
 			clickCount: 0,
 			current: 0,
 			cursorPosition: { x: 0, y: 0 },
@@ -97,11 +96,12 @@ export default class App {
 		const { hold } = this
 		hold.tooltip = document.createElement('b')
 		hold.tooltip.classList.add('kitten__tooltip')
-		hold.tooltip.innerText = 'Click & Hold'
+		// hold.tooltip.innerText = 'Click & Hold'
 		this.nodes.root.appendChild(hold.tooltip)
 		hold.buffer = document.createElement('span')
 		hold.buffer.classList.add('kitten__tooltip__buffer')
-		hold.buffer.innerHTML = '<svg viewBox="0 0 36 36"><path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /></svg>'
+		hold.buffer.innerHTML =
+			'<svg viewBox="0 0 36 36"><path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" /></svg>'
 		hold.tooltip.appendChild(hold.buffer)
 	}
 
@@ -198,30 +198,31 @@ export default class App {
 		if (!this.nodes.activeSlide) return
 		this.nodes.titleTarget.innerHTML =
 			this.nodes.activeSlide.querySelector('.kitten__dummytitles').innerHTML
-		
-		this.nodes.news.style.visibility = this.nodes.activeSlide.dataset.news ? 'visible' : 'hidden'
+
+		this.nodes.news.style.opacity = this.nodes.activeSlide.dataset.news ? '1' : '0'
 	}
 
-	onMouseMove(event) {
+	onMouseMove(e) {
+		this.hold.cursorPosition = {
+			x: e.clientX,
+			y: e.clientY,
+		}
+		if (this.hold.interval) clearInterval(this.hold.interval)
+	}
+
+	positionTootlip() {
 		const { hold } = this
 		const { tooltip } = hold
-
-		if (!hold.showTooltip) {
-			tooltip.style.opacity = 0
-			return
-		}
-
-		hold.cursorPosition = {
-			x: event.clientX,
-			y: event.clientY,
-		}
-
 		const { x, y } = hold.cursorPosition
 		const { width } = tooltip.getBoundingClientRect()
-
 		tooltip.style.top = `${y + 33}px`
 		tooltip.style.left = `${x - width / 2}px`
-		tooltip.style.opacity = 1
+	}
+
+	showTooltip(isVisible = false) {
+		this.positionTootlip()
+		if (this.hold.interval) clearInterval(this.hold.interval)
+		this.hold.tooltip.style.opacity = isVisible ? '1' : '0'
 	}
 
 	onResize() {
@@ -260,15 +261,13 @@ export default class App {
 				if (deviceType.isTouch || self.isDragging) return
 				self.target.scrollLeft -= self.deltaY
 			},
-			onDrag: () => {
+			onDrag: self => {
+				this.nodes.root.style.cursor = 'grabbing'
 				if (!this.hasTooltip) return
-				if (this.hold.interval) clearInterval(this.hold.interval)
-				this.hold.showTooltip = false
+				this.showTooltip(false)
 			},
-			onDragEnd: () => {
-				if (!this.hasTooltip) return
-				if (this.hold.interval) clearInterval(this.hold.interval)
-				this.hold.showTooltip = true
+			onDragEnd: self => {
+				this.nodes.root.style.cursor = 'grab'
 			},
 			tolerance: 10,
 			preventDefault: false,
@@ -288,37 +287,41 @@ export default class App {
 		window.addEventListener('mousemove', this.onMouseMove.bind(this))
 		nodes.planes.forEach(el => {
 			el.addEventListener('mouseenter', () => {
-				if (this.hold.showTooltip) return
-				this.hold.showTooltip = true
+				if (deviceType.isTouch) return
+				this.nodes.root.style.cursor = 'grab'
 			})
 			el.addEventListener('mouseleave', () => {
-				if (this.hold.showTooltip) this.hold.showTooltip = false
-			})
-			el.addEventListener('mousedown', () => {
 				if (deviceType.isTouch) return
-				if (this.hold.interval) clearInterval(this.hold.interval)
-				// this.hold.tooltip.showTooltip = false // implement getter/setter? https://stackoverflow.com/a/37403125
-				// this.hold.tooltip.style.opacity = 0
-				this.hold.buffer.style.strokeDasharray = '0 100';
+				this.nodes.root.style.cursor = 'default'
+			})
+			el.addEventListener('mousedown', event => {
+				if (deviceType.isTouch) return
+				nodes.root.style.cursor = 'pointer'
 
-				this.hold.interval = setInterval(() => {
-					console.log(this.hold.current)
-					if (this.hold.current >= 100) {
-						window.location.href = 'project.html'
-						clearInterval(this.hold.interval)
-						return
-					}
-					this.hold.current++
-					this.hold.buffer.style.strokeDasharray = `${this.hold.current} 100`;
-				}, 10)
+				if (!this.hasTooltip) return
+				setTimeout(() => {
+					this.showTooltip(true)
+
+					this.hold.interval = setInterval(() => {
+						if (this.hold.current >= 100) {
+							window.location.href = 'project.html'
+							clearInterval(this.hold.interval)
+							return
+						}
+						this.hold.current++
+						this.hold.buffer.style.strokeDasharray = `${this.hold.current} 100`
+					}, 10)
+				}, 200)
+				this.hold.buffer.style.strokeDasharray = '0 100'
 			})
 			el.addEventListener('mouseup', () => {
 				if (deviceType.isTouch) return
-				if (this.hold.interval) clearInterval(this.hold.interval)
-				// this.hold.tooltip.showTooltip = true // implement getter/setter? https://stackoverflow.com/a/37403125
-				// this.hold.tooltip.style.opacity = 0
-				this.hold.buffer.style.strokeDasharray = '0 100';
+				this.nodes.root.style.cursor = 'grab'
+
+				if (!this.hasTooltip) return
+				this.showTooltip(false)
 				this.hold.current = 0
+				this.hold.buffer.style.strokeDasharray = '0 100'
 			})
 		})
 	}
