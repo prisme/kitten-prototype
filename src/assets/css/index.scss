@@ -1,8 +1,38 @@
 @import 'icons.scss';
 @import 'reset.scss';
 @import 'typography.scss';
-@import 'main.scss';
+@import 'home.scss';
 @import 'menu.scss';
 @import 'search.scss';
 @import 'project.scss';
 @import 'about.scss';
+
+:root {
+	--black: #000;
+	--white: #fff;
+}
+body {
+	background: var(--black);
+	color: var(--white);
+	font-size: 16px;
+	overscroll-behavior: none;
+	overflow: auto;
+}
+.visually-hidden {
+	position: absolute !important;
+	height: 1px;
+	width: 1px;
+	overflow: hidden;
+	clip: rect(1px, 1px, 1px, 1px);
+	word-wrap: normal;
+}
+.kitten__cat {
+	position: absolute;
+	z-index: 1;
+	bottom: 20px;
+	right: 20px;
+	width: 80px;
+	@media (min-width: $bp) {
+		width: 100px;
+	}
+}

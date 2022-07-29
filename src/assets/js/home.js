@@ -9,7 +9,7 @@ import Menu from './menu'
 gsap.registerPlugin(Observer)
 gsap.registerPlugin(InertiaPlugin)
 gsap.registerPlugin(ScrollToPlugin)
-const gui = new dat.GUI({ closeOnTop: false })
+const gui = new dat.GUI({ closeOnTop: false, closed: true })
 
 const DEPTH = 702
 const MAX_DEPTH = 1000

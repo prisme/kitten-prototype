@@ -8,7 +8,7 @@ import shuffle from 'lodash/shuffle'
 import { vhCalc } from './utils'
 import Menu from './menu'
 
-const gui = new dat.GUI({ closeOnTop: false })
+const gui = new dat.GUI({ closeOnTop: false, closed: true })
 
 window.onload = () => {
 	vhCalc()
@@ -18,8 +18,8 @@ window.onload = () => {
 export default class Search {
 	constructor({ gui }) {
 		this.maxWord = 1
-		this.wordRatio = 0.5
-		this.speedWord = 0.0003 // TODO : problème la vitesse dépend de la taille de l'écran
+		this.wordDensity = 0.2
+		this.wordSpeed = 0.0003 // TODO : problème la vitesse dépend de la taille de l'écran
 		this.searchedWord = ''
 		this.isHidingWords = false
 		this.isShowingWords = false
@@ -56,18 +56,8 @@ export default class Search {
 	 *
 	 */
 	addGUI = gui => {
-		gui
-			.add(this, 'wordRatio', 0.1, 0.5)
-			.step(0.01)
-			.onChange(val => {
-				this.resizeThrottle()
-			})
-		gui
-			.add(this, 'speedWord', 0.00001, 0.0005)
-			.step(0.00001)
-			.onChange(val => {
-				this.throttledChangeWords()
-			})
+		gui.add(this, 'wordDensity', 0.1, 0.3).step(0.001).onChange(this.resizeThrottle)
+		gui.add(this, 'wordSpeed', 0.00001, 0.0005).step(0.00001).onChange(this.throttledChangeWords)
 	}
 
 	/**
@@ -165,7 +155,7 @@ export default class Search {
 			// TODO : add pool design pattern to optimize memory
 			word = new Word({
 				label: wordData,
-				speed: this.speedWord,
+				speed: this.wordSpeed,
 			})
 			this.words.push(word)
 			word.append(this.listEl)
@@ -187,7 +177,7 @@ export default class Search {
 	onResize = isInit => {
 		const totalArea = window.innerWidth * window.innerHeight
 		const wordArea = 200 * 40 // calculated using approximate width and height of one word
-		this.maxWord = Math.round((totalArea / wordArea) * this.wordRatio)
+		this.maxWord = Math.round((totalArea / wordArea) * this.wordDensity)
 		if (isInit !== true) this.throttledChangeWords()
 	}
 
