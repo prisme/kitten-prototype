@@ -1,6 +1,4 @@
-import * as dat from 'dat.gui'
 import { gsap } from 'gsap'
-import { vhCalc } from './utils'
 import Masonry from 'masonry-layout'
 import throttle from 'lodash/throttle'
 
@@ -44,7 +42,7 @@ export const convertJSONToHTML = (mediaDatas) => {
 }
 
 export default class Grid {
-	constructor({ gui, hasDynamicTitle }) {
+	constructor({ hasDynamicTitle = false }) {
 		this.hasDynamicTitle = hasDynamicTitle
 		this.mobileBreakpoint = 768
 		this.isMobileDevice = false
@@ -77,11 +75,6 @@ export default class Grid {
 		window.addEventListener('resize', this.resizeThrottle)
 		this.resizeThrottle()
 	}
-
-	/**
-	 *
-	 */
-	addGUI = gui => {}
 
 	/**
 	 * Add over listener to medias
