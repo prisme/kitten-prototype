@@ -3,6 +3,14 @@ $bp: 768px;
 .kitten {
 	position: relative;
 
+	* {
+		user-select: none;
+		-webkit-touch-callout: none;
+
+		::selection {
+			background: transparent;
+		}
+	}
 	.world {
 		width: 100%;
 		height: 100vh;
@@ -25,8 +33,13 @@ $bp: 768px;
 			height: 100vh;
 			height: calc(100 * var(--vh));
 
+			-webkit-user-select: none;
+			user-select: none;
+			-webkit-touch-callout: none;
+			::selection {
+				background: transparent;
+			}
 			img {
-				user-select: none;
 				height: 100%;
 				opacity: 0;
 				transition: opacity 0.1s ease-in;

@@ -212,7 +212,7 @@ export default class App {
 		if (this.hold.interval) clearInterval(this.hold.interval)
 	}
 
-	positionTootlip() {
+	showTooltip(isVisible = false) {
 		if (deviceType.isTouch) return
 		const { hold } = this
 		const { tooltip } = hold
@@ -220,11 +220,6 @@ export default class App {
 		const { width } = tooltip.getBoundingClientRect()
 		tooltip.style.top = `${y + 33}px`
 		tooltip.style.left = `${x - width / 2}px`
-	}
-
-	showTooltip(isVisible = false) {
-		if (deviceType.isTouch) return
-		this.positionTootlip()
 		if (this.hold.interval) clearInterval(this.hold.interval)
 		this.hold.tooltip.style.opacity = isVisible ? '1' : '0'
 	}
@@ -267,12 +262,11 @@ export default class App {
 				if (deviceType.isTouch || self.isDragging) return
 				self.target.scrollLeft -= self.deltaY
 			},
-			onDrag: self => {
+			onDrag: () => {
 				this.nodes.root.style.cursor = 'grabbing'
-				if (!this.hasTooltip) return
-				this.showTooltip(false)
+				if (this.hasTooltip) this.showTooltip(false)
 			},
-			onDragEnd: self => {
+			onDragEnd: () => {
 				this.nodes.root.style.cursor = 'grab'
 			},
 			tolerance: 10,
@@ -289,39 +283,34 @@ export default class App {
 		}
 
 		// tooltip
-		if (!this.hasTooltip) return
+		if (!this.hasTooltip || deviceType.isTouch) return
+
 		window.addEventListener('mousemove', this.onMouseMove.bind(this))
+
 		nodes.planes.forEach(el => {
 			el.addEventListener('mouseenter', () => {
-				if (deviceType.isTouch) return
 				this.nodes.root.style.cursor = 'grab'
 			})
 			el.addEventListener('mouseleave', () => {
-				if (deviceType.isTouch) return
 				this.nodes.root.style.cursor = 'default'
 			})
-			el.addEventListener('mousedown', event => {
-				if (deviceType.isTouch) return
+			el.addEventListener('mousedown', () => {
 				nodes.root.style.cursor = 'pointer'
 
-				if (!this.hasTooltip) return
-				setTimeout(() => {
-					this.showTooltip(true)
+				this.showTooltip(true)
 
-					this.hold.interval = setInterval(() => {
-						if (this.hold.current >= 100) {
-							window.location.href = 'project.html'
-							clearInterval(this.hold.interval)
-							return
-						}
-						this.hold.current++
-						this.hold.buffer.style.strokeDasharray = `${this.hold.current} 100`
-					}, 10)
-				}, 200)
+				this.hold.interval = setInterval(() => {
+					if (this.hold.current >= 100) {
+						window.location.href = 'project.html'
+						clearInterval(this.hold.interval)
+						return
+					}
+					this.hold.current++
+					this.hold.buffer.style.strokeDasharray = `${this.hold.current} 100`
+				}, 10)
 				this.hold.buffer.style.strokeDasharray = '0 100'
 			})
 			el.addEventListener('mouseup', () => {
-				if (deviceType.isTouch) return
 				this.nodes.root.style.cursor = 'grab'
 
 				if (!this.hasTooltip) return
