@@ -12,6 +12,7 @@ gsap.registerPlugin(ScrollToPlugin)
 const gui = new dat.GUI({ closeOnTop: false, closed: true })
 
 const DEPTH = 702
+const DEPTH_portrait = 520
 const MAX_DEPTH = 1000
 
 window.onload = () => {
@@ -21,7 +22,8 @@ export default class App {
 	constructor({ gui }) {
 		this.gui = gui
 		this.hasTooltip = true
-		this.depth = DEPTH
+		this.isPortrait = window.innerHeight > window.innerWidth
+		this.depth = this.isPortrait ? DEPTH_portrait : DEPTH
 		this.offsetX = 0
 		this.titleIndex = 0
 		this.planeWidths = []
@@ -211,6 +213,7 @@ export default class App {
 	}
 
 	positionTootlip() {
+		if (deviceType.isTouch) return
 		const { hold } = this
 		const { tooltip } = hold
 		const { x, y } = hold.cursorPosition
@@ -220,6 +223,7 @@ export default class App {
 	}
 
 	showTooltip(isVisible = false) {
+		if (deviceType.isTouch) return
 		this.positionTootlip()
 		if (this.hold.interval) clearInterval(this.hold.interval)
 		this.hold.tooltip.style.opacity = isVisible ? '1' : '0'
@@ -227,7 +231,9 @@ export default class App {
 
 	onResize() {
 		this.offsetX = 0
-		this.depth = Math.min(MAX_DEPTH, this.depth)
+		this.isPortrait = window.innerHeight > window.innerWidth
+		const D = this.isPortrait ? DEPTH_portrait : DEPTH
+		this.depth = Math.min(Math.min(D, this.depth), window.innerHeight)
 		this.planeWidths = this.getPlaneWidths()
 		this.setTransform()
 		if (this.gui) this.gui.updateDisplay()
