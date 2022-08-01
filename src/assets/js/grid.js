@@ -1,6 +1,4 @@
-import * as dat from 'dat.gui'
 import { gsap } from 'gsap'
-import { vhCalc } from './utils'
 import Masonry from 'masonry-layout'
 import throttle from 'lodash/throttle'
 
@@ -8,7 +6,7 @@ import throttle from 'lodash/throttle'
  * Helper to get all the projects in html format
  * It's automaticaly copy/paste if you have DOM focused
  */
-export const convertJSONToHTML = (mediaDatas) => {
+export const convertJSONToHTML = mediaDatas => {
 	let result = ''
 	mediaDatas.forEach((mediaData, index) => {
 		const sizeClass =
@@ -18,18 +16,14 @@ export const convertJSONToHTML = (mediaDatas) => {
 			: ''
 		result += `<li`
 		result += ` class="project__media${sizeClass}${flagClass}"`
-		if (mediaData.title)
-			result += `data-title="${mediaData.title} (debug:${index})"`
+		if (mediaData.title) result += `data-title="${mediaData.title}"`
 		result += `>`
-		if (mediaData.link)
-			result += `<a href="${mediaData.link}">`
+		if (mediaData.link) result += `<a href="${mediaData.link}">`
 		result += `<img`
 		result += ` src="${mediaData.image}"`
-		if (mediaData.title)
-			result += ` alt="${mediaData.title}"`
+		if (mediaData.title) result += ` alt="${mediaData.title}"`
 		result += `/>`
-		if (mediaData.link)
-			result += `</a>`
+		if (mediaData.link) result += `</a>`
 		// TODO : should be optimized
 		// currently adding video to the html because parcel doosn't import dynamicaly loaded files
 		// possible solution : https://en.parceljs.org/module_resolution.html#glob-file-paths
@@ -44,7 +38,7 @@ export const convertJSONToHTML = (mediaDatas) => {
 }
 
 export default class Grid {
-	constructor({ gui, hasDynamicTitle }) {
+	constructor({ hasDynamicTitle = false }) {
 		this.hasDynamicTitle = hasDynamicTitle
 		this.mobileBreakpoint = 768
 		this.isMobileDevice = false
@@ -66,8 +60,7 @@ export default class Grid {
 		if (this.hasDynamicTitle) {
 			this.addOverListeners()
 			gsap.ticker.add(this.onRender)
-		}
-		else {
+		} else {
 			this.titleEl.classList.add('project__title--visible')
 		}
 		// add video actions
@@ -77,11 +70,6 @@ export default class Grid {
 		window.addEventListener('resize', this.resizeThrottle)
 		this.resizeThrottle()
 	}
-
-	/**
-	 *
-	 */
-	addGUI = gui => {}
 
 	/**
 	 * Add over listener to medias
