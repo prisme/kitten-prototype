@@ -9,5 +9,5 @@ window.onload = () => {
 	new Grid({
 		hasDynamicTitle: false,
 	})
-	// convertJSONToHTML(projectData.medias)
+	convertJSONToHTML(projectData.medias)
 }
