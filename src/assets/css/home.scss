@@ -1,16 +1,8 @@
 $bp: 768px;
 
-.kitten.-home {
+.kitten {
 	position: relative;
 
-	* {
-		user-select: none;
-		-webkit-touch-callout: none;
-
-		::selection {
-			background: transparent;
-		}
-	}
 	.world {
 		width: 100%;
 		height: 100vh;
@@ -139,14 +131,24 @@ $bp: 768px;
 			background: linear-gradient(90deg, rgba(255, 255, 255, 0) 85.7%, #ffffff 100%);
 		}
 	}
-}
 
-// dat-gui
-.kitten.-home + .dg.ac {
-	z-index: 1 !important;
-	position: fixed !important;
-	bottom: 70px !important;
-	right: 20px !important;
-	left: initial !important;
-	top: initial !important;
+	&.-home {
+		* {
+			user-select: none;
+			-webkit-touch-callout: none;
+
+			::selection {
+				background: transparent;
+			}
+		}
+
+		& + .dg.ac {
+			z-index: 1 !important;
+			position: fixed !important;
+			bottom: 70px !important;
+			right: 20px !important;
+			left: initial !important;
+			top: initial !important;
+		}
+	}
 }
