@@ -1,3 +1,4 @@
+$bp: 768px;
 .kitten__menu {
 	position: fixed;
 	z-index: 2;
@@ -83,7 +84,7 @@
 			}
 
 			// todo: mobile-first mq
-			@media (max-width: 600px) {
+			@media (max-width: $bp) {
 				position: absolute;
 				top: 0;
 				left: 0;
