@@ -25,6 +25,11 @@ $bp: 768px;
 		flex-direction: row;
 		align-items: center;
 
+		.kitten__menu_navigation-nav {
+			@media (max-width: $bp) {
+				transition: opacity 0.2s linear, visibility 0.2s linear;
+			}
+		}
 		&.active {
 			.kitten__menu_navigation-nav {
 				@media (min-width: $bp) {
@@ -33,7 +38,7 @@ $bp: 768px;
 				}
 				visibility: visible;
 				opacity: 1;
-				transition: opacity 0.3s linear, visibility 0.3s linear;
+				transition: opacity 0.2s linear, visibility 0.2s linear;
 			}
 
 			.kitten__menu_navigation-icon {
@@ -92,14 +97,15 @@ $bp: 768px;
 				position: absolute;
 				top: 0;
 				left: 0;
-				width: 100vw !important;
+				width: 100%;
 				height: 100vh;
 				height: calc(100 * var(--vh));
-				background: var(--white);
 				padding-right: 0;
 				padding-top: 100px;
-				text-align: right;
+				background: rgba(255, 255, 255, 0.5);
+				backdrop-filter: blur(8px);
 				box-shadow: inset 50px 0px 100px -38px var(--black);
+				text-align: right;
 
 				ol {
 					flex-direction: column;
