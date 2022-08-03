@@ -300,13 +300,13 @@ export default class App {
 				this.showTooltip(true)
 
 				this.hold.interval = setInterval(() => {
-					if (this.hold.current >= 100) {
+					if (this.hold.current >= 50) {
 						window.location.href = 'project.html'
 						clearInterval(this.hold.interval)
 						return
 					}
 					this.hold.current++
-					this.hold.buffer.style.strokeDasharray = `${this.hold.current} 100`
+					this.hold.buffer.style.strokeDasharray = `${this.hold.current * 2} 100`
 				}, 10)
 				this.hold.buffer.style.strokeDasharray = '0 100'
 			})
