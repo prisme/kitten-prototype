@@ -4,7 +4,8 @@
 		"src/index.html",
 		"src/search.html",
 		"src/projects.html",
-		"src/project.html"
+		"src/project.html",
+		"src/meow.html"
 	],
 	"scripts": {
 		"start": "parcel -p 7777",

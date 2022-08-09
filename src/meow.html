@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Kitten</title>
+	<meta name="description" content />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" href="assets/css/index.scss" />
+	<script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+	<script src="//cdn.rawgit.com/donmccurdy/aframe-extras/v4.1.1/dist/aframe-extras.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+	<div class="kitten__menu">
+		<a href="/" class="kitten__menu_logo icon-logo1" style="color: black"
+			><h1 class="visually-hidden">kitten production</h1>
+		</a>
+	</div>
+	<a-scene
+		renderer="antialias: true; colorManagement: true; sortObjects: true; physicallyCorrectLights: true; maxCanvasWidth: 1920; maxCanvasHeight: 1920;"
+		fog="type: exponential; color:#ffffff; density:0.007;"
+		class="fullscreen"
+		vr-mode-ui="enabled: false"
+	>
+		<a-entity id="rig" position="0 5 0">
+			<a-entity
+				position="0 1.6 40"
+				camera="userHeight: 1.6; fov:90;"
+				movement-controls="fly: true; speed: 2"
+				look-controls="pointerLockEnabled:true;"
+				gamepad-controls
+				keyboard-controls
+				touch-controls
+				touch-controls
+			>
+				<a-box
+					material="color:white; src:star.png; transparent:true; shader:flat"
+					position="0 0 -1"
+					scale="0.02 0.02 0.02"
+					cursor
+				></a-box>
+			</a-entity>
+		</a-entity>
+
+		<a-box
+			static-body
+			id="floor"
+			material="color:#ff0000;roughness:1;"
+			position="0 0 0"
+			rotation="0 0 0"
+			scale="10000 0.2 10000"
+			shadow="receive: false;"
+		></a-box>
+		<a-box
+			static-body
+			material="color:#ff0000;roughness:1;"
+			position="20 1.25 20"
+			rotation="0 0 0"
+			scale="120 2.5 120"
+			shadow="receive: false;"
+		></a-box>
+
+		<!-- Platform Yellow -->
+		<a-entity
+			static-body
+			geometry="primitive: cylinder; height: 200; radius: 5"
+			material="color:#ff0000; roughness:1;"
+			position="-20 100 -20"
+		></a-entity>
+		<a-box
+			static-body
+			material="color:#ff0000; roughness:1;"
+			position="-20 30 -20"
+			rotation="0 0 0"
+			scale="40 2.5 40"
+		></a-box>
+		<a-box
+			static-body
+			material="color:#ff0000; roughness:1;"
+			position="-20 100 -5"
+			rotation="0 0 0"
+			scale="40 2.5 70"
+		></a-box>
+
+		<a-entity
+			geometry="primitive: cylinder; openEnded: true; height: 40; radius: 20"
+			material="side: double; color:#ff0000; roughness:1;"
+			position="10 129 -20"
+			rotation="90 0 0"
+		></a-entity>
+		<a-box
+			static-body
+			material="color:#ff0000;roughness:1;"
+			position="-20 200 -20"
+			rotation="0 0 0"
+			scale="40 2.5 40"
+		></a-box>
+
+		<!-- Content on Platform Yellow -->
+		<a-obj-model
+			static-body
+			material="color:#000000;"
+			shadow="receive: true; cast: true;"
+			src="https://kitten-obj-ecrantotal.vercel.app/cat3.obj"
+			position="-33 35 -20"
+			rotation="0 180 0"
+			scale="0.7 0.7 1"
+		></a-obj-model>
+
+		<!-- Platform Red -->
+		<a-entity
+			static-body
+			geometry="primitive: cylinder; height: 60; radius: 5"
+			material="color:#ff0000;roughness:1;"
+			position="50 30 -20"
+		></a-entity>
+		<a-box
+			static-body
+			material="color:#ff0000;roughness:1;"
+			position="50 60 -20"
+			rotation="0 0 0"
+			scale="40 2.5 40"
+		></a-box>
+		<a-box
+			static-body
+			material="color:#ff0000;roughness:1;"
+			position="68.75 80 -20"
+			rotation="0 0 0"
+			scale="2.5 40 40"
+		></a-box>
+		<a-box
+			static-body
+			material="color:#ff0000;roughness:1;"
+			position="50 80 -38.75"
+			rotation="0 0 0"
+			scale="40 40 2.5"
+		></a-box>
+		<a-box
+			static-body
+			material="color:#ff0000;roughness:1;"
+			position="45 80 -1.25"
+			rotation="0 0 0"
+			scale="30 40 2.5"
+		></a-box>
+		<a-box
+			static-body
+			material="color:#ff0000;roughness:1;"
+			position="31.25 80 -10"
+			rotation="0 0 0"
+			scale="2.5 40 20"
+		></a-box>
+		<a-box
+			static-body
+			material="color:#ff0000;roughness:1;"
+			position="50 100 -20"
+			rotation="0 0 0"
+			scale="40 2.5 40"
+		></a-box>
+		<!-- Top Platform Red with ball -->
+		<a-entity
+			static-body
+			geometry="primitive: cylinder; height: 140; radius: 5"
+			material="color:#ff0000;roughness:1;"
+			position="50 170 -20"
+		></a-entity>
+
+		<a-entity
+			static-body
+			geometry="primitive: cylinder; height: 2.5; radius: 40"
+			material="color:#ff0000;roughness:1;"
+			position="50 240 -20"
+			scale="1 1 1"
+			rotation="0 35 0"
+		></a-entity>
+		<a-entity
+			static-body
+			geometry="primitive: cylinder; height: 40; radius: 0.2"
+			material="color:#ff0000;roughness:1;"
+			position="69.8 220 -39.8"
+		></a-entity>
+		<a-sphere material="color:#ff0000;" radius="4" position="69.8 200 -39.8"></a-sphere>
+
+		<!-- Content on Platform Red -->
+		<a-obj-model
+			static-body
+			material="color:#000000;"
+			shadow="receive: true; cast: true;"
+			src="https://kitten-obj-ecrantotal.vercel.app/cat_sit2.obj"
+			position="55 101 -30"
+			rotation="0 -90 0"
+			scale="0.45 0.45 0.45"
+		></a-obj-model>
+
+		<!-- Platform Blue -->
+		<a-entity
+			static-body
+			geometry="primitive: cylinder; height: 200; radius: 5"
+			material="color:#ff0000;roughness:1;"
+			position="50 100 60"
+		></a-entity>
+		<a-box
+			static-body
+			material="color:#ff0000;roughness:1;"
+			position="10 60 60"
+			rotation="0 0 0"
+			scale="120 2.5 40"
+		></a-box>
+		<a-box
+			static-body
+			material="color:#ff0000;roughness:1;"
+			position="10 64 80"
+			rotation="0 0 0"
+			scale="120 10 2.5"
+		></a-box>
+		<a-box
+			static-body
+			material="color:#ff0000;roughness:1;"
+			position="-48.75 64 60"
+			rotation="0 0 0"
+			scale="2.5 10 40"
+		></a-box>
+		<a-box
+			static-body
+			material="color:#ff0000;roughness:1;"
+			position="68.75 64 60"
+			rotation="0 0 0"
+			scale="2.5 10 40"
+		></a-box>
+
+		<a-box
+			static-body
+			material="color:#ff0000;roughness:1;"
+			position="50 200 60"
+			rotation="0 0 0"
+			scale="40 2.5 40"
+		></a-box>
+		<a-obj-model
+			static-body
+			material="color:#000000;"
+			shadow="receive: true; cast: true;"
+			src="https://kitten-obj-ecrantotal.vercel.app/cat.obj"
+			position="50 218.8 60"
+			rotation="0 160 0"
+			scale="0.5 0.5 0.5"
+		></a-obj-model>
+
+		<!-- Platform Green -->
+		<a-entity
+			static-body
+			geometry="primitive: cylinder; height: 150; radius: 5"
+			material="color:#ff0000;roughness:1;"
+			position="-20 75 60"
+		></a-entity>
+		<a-entity
+			static-body
+			geometry="primitive: cylinder; height: 2.5; radius: 20"
+			material="color:#ff0000;roughness:1;"
+			position="-40 100 75"
+			scale="1.5 1 1"
+			rotation="0 35 0"
+		></a-entity>
+		<a-obj-model
+			static-body
+			material="color:#000000;"
+			shadow="receive: true; cast: true;"
+			src="https://kitten-obj-ecrantotal.vercel.app/cat_statue.obj"
+			position="-40 101 75"
+			rotation="0 0 0"
+			scale="0.02 0.02 0.02"
+		></a-obj-model>
+
+		<!-- Content on Platform Green -->
+		<a-sphere material="color:#ff0000;" radius="30" position="-20 180 60"></a-sphere>
+		<a-obj-model
+			static-body
+			material="color:#000000;"
+			shadow="receive: true; cast: true;"
+			src="https://kitten-obj-ecrantotal.vercel.app/cat_box2.obj"
+			position="-20 151 5"
+			rotation="0 -80 0"
+			scale="0.7 0.7 0.7"
+		></a-obj-model>
+
+		<!-- Platform Top -->
+		<a-box
+			static-body
+			material="color:#ff0000;roughness:1;"
+			position="20 150 20"
+			rotation="0 0 0"
+			scale="120 2 120"
+			shadow="receive: false;"
+		></a-box>
+
+		<!-- K top -->
+		<a-box
+			static-body
+			material="color:#ff0000;roughness:1;"
+			position="150 202 -10"
+			rotation="0 0 35"
+			scale="180 2 60"
+			shadow="receive: false;"
+		></a-box>
+		<a-box
+			static-body
+			material="color:#ff0000;roughness:1;"
+			position="250 253 -10"
+			rotation="0 0 0"
+			scale="60 2 60"
+			shadow="receive: false;"
+		></a-box>
+		<a-entity
+			static-body
+			geometry="primitive: cylinder; height: 40; radius: 0.2"
+			material="color:#ff0000;roughness:1;"
+			position="280 235 -39.8"
+		></a-entity>
+		<a-sphere material="color:#ff0000;" radius="4" position="280 215 -39.8"></a-sphere>
+		<a-obj-model
+			static-body
+			material="color:#000000;"
+			shadow="receive: true; cast: true;"
+			src="https://kitten-obj-ecrantotal.vercel.app/cat2.obj"
+			position="250 254 -10"
+			rotation="0 30 0"
+			scale="2 2 2"
+		></a-obj-model>
+
+		<!-- K down -->
+		<a-box
+			static-body
+			material="color:#ff0000;roughness:1;"
+			position="145 15 60"
+			rotation="0 0 -35"
+			scale="180 2 40"
+			shadow="receive: false;"
+		></a-box>
+
+		<a-sky material="color:#ffffff;"></a-sky>
+	</a-scene>
+</body>
